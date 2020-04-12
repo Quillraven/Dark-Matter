@@ -1,0 +1,76 @@
+
+graphics.png
+size: 128,16
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+fire
+  rotate: false
+  xy: 1, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 0
+fire
+  rotate: false
+  xy: 11, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+fire
+  rotate: false
+  xy: 21, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 2
+orb_blue
+  rotate: false
+  xy: 31, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 0
+orb_blue
+  rotate: false
+  xy: 41, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+orb_yellow
+  rotate: false
+  xy: 51, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 0
+orb_yellow
+  rotate: false
+  xy: 61, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+ship_base
+  rotate: false
+  xy: 71, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+ship_left
+  rotate: false
+  xy: 81, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+ship_right
+  rotate: false
+  xy: 91, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
