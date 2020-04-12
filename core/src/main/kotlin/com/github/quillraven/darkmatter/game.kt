@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.profiling.GLProfiler
+import com.github.quillraven.darkmatter.event.GameEventManager
 import com.github.quillraven.darkmatter.screen.LoadingScreen
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
@@ -13,10 +14,10 @@ import ktx.async.KtxAsync
 import ktx.log.logger
 
 private val LOG = logger<Game>()
-const val V_WIDTH_PIXELS = 160
-const val V_HEIGHT_PIXELS = 90
-const val V_WIDTH = 16
-const val V_HEIGHT = 9
+const val V_WIDTH_PIXELS = 90
+const val V_HEIGHT_PIXELS = 160
+const val V_WIDTH = 9
+const val V_HEIGHT = 16
 const val UNIT_SCALE = 1 / 8f
 
 class Game : KtxGame<KtxScreen>() {
@@ -26,6 +27,7 @@ class Game : KtxGame<KtxScreen>() {
         KtxAsync.initiate()
         AssetStorage()
     }
+    val gameEventManager by lazy { GameEventManager() }
     private val profiler by lazy { GLProfiler(Gdx.graphics) }
 
     override fun create() {
@@ -43,7 +45,7 @@ class Game : KtxGame<KtxScreen>() {
 
     override fun dispose() {
         LOG.debug { "Dispose game with ${this.screens.size} screen(s)" }
-        LOG.debug { "Last number of drawcalls: ${profiler.drawCalls}" }
+        LOG.debug { "Last number of draw calls: ${profiler.drawCalls}" }
         LOG.debug { "Last number of texture bindings: ${profiler.textureBindings}" }
         super.dispose()
         batch.dispose()

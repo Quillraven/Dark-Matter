@@ -7,8 +7,8 @@ import com.github.quillraven.darkmatter.Game
 fun main() {
     Lwjgl3Application(Game(), Lwjgl3ApplicationConfiguration().apply {
         setTitle("Dark Matter")
-        setWindowSizeLimits(640, 360, -1, -1)
-        setWindowedMode(640, 360)
+        setWindowSizeLimits(360, 640, -1, -1)
+        setWindowedMode(360, 640)
         setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png")
     })
 }

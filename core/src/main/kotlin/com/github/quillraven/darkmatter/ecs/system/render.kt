@@ -6,8 +6,10 @@ import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
+import com.github.quillraven.darkmatter.ecs.component.RemoveComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
 import ktx.ashley.allOf
+import ktx.ashley.exclude
 import ktx.ashley.get
 import ktx.graphics.use
 import ktx.log.logger
@@ -21,7 +23,7 @@ class RenderSystem(
     private val gameViewport: Viewport,
     private val camera: Camera = gameViewport.camera
 ) : SortedIteratingSystem(
-    allOf(GraphicComponent::class, TransformComponent::class).get(),
+    allOf(GraphicComponent::class, TransformComponent::class).exclude(RemoveComponent::class).get(),
     compareBy { entity -> entity[TransformComponent.mapper] }
 ) {
     override fun update(deltaTime: Float) {
