@@ -46,11 +46,6 @@ dependencies {
     natives("com.badlogicgames.gdx:gdx-platform:${Versions.gdx}:natives-arm64-v8a")
     natives("com.badlogicgames.gdx:gdx-platform:${Versions.gdx}:natives-x86")
     natives("com.badlogicgames.gdx:gdx-platform:${Versions.gdx}:natives-x86_64")
-    natives("com.badlogicgames.gdx:gdx-box2d-platform:${Versions.gdx}:natives-armeabi")
-    natives("com.badlogicgames.gdx:gdx-box2d-platform:${Versions.gdx}:natives-armeabi-v7a")
-    natives("com.badlogicgames.gdx:gdx-box2d-platform:${Versions.gdx}:natives-arm64-v8a")
-    natives("com.badlogicgames.gdx:gdx-box2d-platform:${Versions.gdx}:natives-x86")
-    natives("com.badlogicgames.gdx:gdx-box2d-platform:${Versions.gdx}:natives-x86_64")
 }
 
 // Called every time gradle gets executed, takes the native dependencies of

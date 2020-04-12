@@ -7,7 +7,6 @@ dependencies {
     implementation(project(":core"))
     implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:${Versions.gdx}")
     implementation("com.badlogicgames.gdx:gdx-platform:${Versions.gdx}:natives-desktop")
-    implementation("com.badlogicgames.gdx:gdx-box2d-platform:${Versions.gdx}:natives-desktop")
 }
 
 java {
