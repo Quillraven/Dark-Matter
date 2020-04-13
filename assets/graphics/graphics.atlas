@@ -1,6 +1,6 @@
 
 graphics.png
-size: 128,16
+size: 256,16
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -31,59 +31,87 @@ life
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
-  index: -1
-orb_blue
+  index: 0
+life
   rotate: false
   xy: 41, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+life
+  rotate: false
+  xy: 51, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 2
+life
+  rotate: false
+  xy: 61, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 3
+orb_blue
+  rotate: false
+  xy: 71, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: 0
 orb_blue
   rotate: false
-  xy: 51, 1
+  xy: 81, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: 1
 orb_yellow
   rotate: false
-  xy: 61, 1
+  xy: 91, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: 0
 orb_yellow
   rotate: false
-  xy: 71, 1
+  xy: 101, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: 1
 shield
   rotate: false
-  xy: 81, 1
+  xy: 111, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
-  index: -1
+  index: 0
+shield
+  rotate: false
+  xy: 121, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
 ship_base
   rotate: false
-  xy: 91, 1
+  xy: 131, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 ship_left
   rotate: false
-  xy: 101, 1
+  xy: 141, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 ship_right
   rotate: false
-  xy: 111, 1
+  xy: 151, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
