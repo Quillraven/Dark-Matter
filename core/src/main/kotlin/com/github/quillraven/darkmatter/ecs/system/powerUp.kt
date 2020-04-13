@@ -134,8 +134,8 @@ class PowerUpSystem(
             LOG.debug { "Picking up power of type ${powerUpCmp.type}" }
 
             when (powerUpCmp.type) {
-                PowerUpType.SPEED_1 -> player[MoveComponent.mapper]?.let { it.speed.y += 2.75f }
-                PowerUpType.SPEED_2 -> player[MoveComponent.mapper]?.let { it.speed.y += 3.5f }
+                PowerUpType.SPEED_1 -> player[MoveComponent.mapper]?.let { it.speed.y += 3f }
+                PowerUpType.SPEED_2 -> player[MoveComponent.mapper]?.let { it.speed.y += 3.75f }
                 PowerUpType.LIFE -> player[PlayerComponent.mapper]?.let {
                     it.life = min(it.maxLife, it.life + 25f)
                 }
