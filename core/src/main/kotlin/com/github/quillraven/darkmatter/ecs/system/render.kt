@@ -3,7 +3,10 @@ package com.github.quillraven.darkmatter.ecs.system
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.SortedIteratingSystem
 import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
@@ -17,14 +20,30 @@ import ktx.math.component2
 private val LOG = logger<RenderSystem>()
 
 class RenderSystem(
+    private val stage: Stage,
     private val batch: Batch,
     private val gameViewport: Viewport,
+    backgroundTexture: Texture,
     private val camera: Camera = gameViewport.camera
 ) : SortedIteratingSystem(
     allOf(GraphicComponent::class, TransformComponent::class).get(),
     compareBy { entity -> entity[TransformComponent.mapper] }
 ) {
+    private val background = Sprite(backgroundTexture.apply {
+        setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
+    })
+
     override fun update(deltaTime: Float) {
+        // render scrolling background
+        stage.viewport.apply()
+        batch.use(stage.camera.combined) {
+            background.run {
+                scroll(deltaTime * 0.01f, -deltaTime * 0.25f)
+                draw(batch)
+            }
+        }
+
+        // render entities
         forceSort()
         gameViewport.apply()
         batch.use(camera.combined) {

@@ -1,8 +1,9 @@
 package com.github.quillraven.darkmatter.screen
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.quillraven.darkmatter.Game
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -16,7 +17,7 @@ private val LOG = logger<LoadingScreen>()
 
 class LoadingScreen(
     private val game: Game,
-    private val batch: Batch = game.batch,
+    private val stage: Stage = game.stage,
     private val assets: AssetStorage = game.assets
 ) : KtxScreen {
     override fun show() {
@@ -24,7 +25,8 @@ class LoadingScreen(
 
         val timeToLoadAndInit = measureTimeMillis {
             val assetRefs = listOf(
-                assets.loadAsync<TextureAtlas>("graphics/graphics.atlas")
+                assets.loadAsync<TextureAtlas>("graphics/graphics.atlas"),
+                assets.loadAsync<Texture>("graphics/background.png")
             )
             KtxAsync.launch {
                 assetRefs.joinAll()
@@ -36,6 +38,10 @@ class LoadingScreen(
 
     private fun assetsLoaded() {
         game.addScreen(GameScreen(game))
+    }
+
+    override fun resize(width: Int, height: Int) {
+        stage.viewport.update(width, height, true)
     }
 
     override fun render(delta: Float) {

@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.profiling.GLProfiler
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.quillraven.darkmatter.event.GameEventManager
 import com.github.quillraven.darkmatter.screen.LoadingScreen
 import ktx.app.KtxGame
@@ -23,6 +25,9 @@ const val UNIT_SCALE = 1 / 8f
 class Game : KtxGame<KtxScreen>() {
     //TODO replace with TextureArraySpriteBatch once available
     val batch: Batch by lazy { SpriteBatch() }
+    val stage: Stage by lazy {
+        Stage(FitViewport(V_WIDTH_PIXELS.toFloat(), V_HEIGHT_PIXELS.toFloat()), batch)
+    }
     val assets: AssetStorage by lazy {
         KtxAsync.initiate()
         AssetStorage()
@@ -50,5 +55,6 @@ class Game : KtxGame<KtxScreen>() {
         super.dispose()
         batch.dispose()
         assets.dispose()
+        stage.dispose()
     }
 }

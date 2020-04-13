@@ -3,6 +3,7 @@ package com.github.quillraven.darkmatter.screen
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.quillraven.darkmatter.Game
 import com.github.quillraven.darkmatter.V_HEIGHT
@@ -41,7 +42,8 @@ class GameScreen(
     private val game: Game,
     private val batch: Batch = game.batch,
     private val assets: AssetStorage = game.assets,
-    private val gameEventManager: GameEventManager = game.gameEventManager
+    private val gameEventManager: GameEventManager = game.gameEventManager,
+    private val stage: Stage = game.stage
 ) : KtxScreen, GameEventListener {
     private val viewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
     private val engine = PooledEngine().apply {
@@ -62,7 +64,14 @@ class GameScreen(
         )
         addSystem(AttachSystem())
         addSystem(AnimationSystem(atlas))
-        addSystem(RenderSystem(batch, viewport))
+        addSystem(
+            RenderSystem(
+                stage,
+                batch,
+                viewport,
+                assets["graphics/background.png"]
+            )
+        )
         addSystem(RemoveSystem(gameEventManager))
     }
     private var respawn = true
@@ -81,6 +90,7 @@ class GameScreen(
 
     override fun resize(width: Int, height: Int) {
         viewport.update(width, height, true)
+        stage.viewport.update(width, height, true)
     }
 
     override fun render(delta: Float) {
