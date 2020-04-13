@@ -32,7 +32,7 @@ class AttachSystem :
                     transform.position.set(
                         attachTransform.position.x + attach.offset.x,
                         attachTransform.position.y + attach.offset.y,
-                        0f
+                        transform.position.z
                     )
                 }
             }
