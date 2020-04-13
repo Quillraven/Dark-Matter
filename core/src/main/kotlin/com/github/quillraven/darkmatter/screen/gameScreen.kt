@@ -21,7 +21,7 @@ import com.github.quillraven.darkmatter.ecs.system.PlayerInputSystem
 import com.github.quillraven.darkmatter.ecs.system.RemoveSystem
 import com.github.quillraven.darkmatter.ecs.system.RenderSystem
 import com.github.quillraven.darkmatter.ecs.system.VerticalMoveSystem
-import com.github.quillraven.darkmatter.event.EventType
+import com.github.quillraven.darkmatter.event.GameEventType
 import com.github.quillraven.darkmatter.event.GameEventListener
 import com.github.quillraven.darkmatter.event.GameEventManager
 import ktx.app.KtxScreen
@@ -60,7 +60,8 @@ class GameScreen(
 
     override fun show() {
         LOG.debug { "Show" }
-        gameEventManager.addListener(this)
+        gameEventManager.addListener(GameEventType.PLAYER_SPAWN,this)
+        gameEventManager.addListener(GameEventType.PLAYER_DEATH,this)
     }
 
     override fun hide() {
@@ -111,13 +112,13 @@ class GameScreen(
             }
         }
 
-        gameEventManager.dispatchEvent(EventType.PLAYER_SPAWN)
+        gameEventManager.dispatchEvent(GameEventType.PLAYER_SPAWN)
     }
 
-    override fun onEvent(type: EventType, data: Any?) {
+    override fun onEvent(type: GameEventType, data: Any?) {
         when (type) {
-            EventType.PLAYER_SPAWN -> LOG.debug { "Spawn new player" }
-            EventType.PLAYER_DEATH -> {
+            GameEventType.PLAYER_SPAWN -> LOG.debug { "Spawn new player" }
+            GameEventType.PLAYER_DEATH -> {
                 LOG.debug { "Player died with a distance of $data" }
                 respawn = true
             }

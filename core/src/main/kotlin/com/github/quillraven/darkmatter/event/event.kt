@@ -2,43 +2,64 @@ package com.github.quillraven.darkmatter.event
 
 import com.badlogic.gdx.utils.Array
 import ktx.log.logger
+import java.util.*
 
 private val LOG = logger<GameEventManager>()
 
-enum class EventType {
+enum class GameEventType {
     PLAYER_SPAWN,
     PLAYER_DEATH
 }
 
 interface GameEventListener {
-    fun onEvent(type: EventType, data: Any? = null)
+    fun onEvent(type: GameEventType, data: Any? = null)
 }
 
 class GameEventManager {
-    private val listeners = Array<GameEventListener>(8)
+    private val listeners = EnumMap<GameEventType, Array<GameEventListener>>(GameEventType::class.java)
 
-    fun addListener(listener: GameEventListener) {
-        if (listener in listeners) {
-            LOG.error { "Trying to add already existing listener: $listener" }
-            return
-        } else {
-            LOG.debug { "Adding listener: $listener" }
+    fun addListener(type: GameEventType, listener: GameEventListener) {
+        var eventListeners = listeners[type]
+        if (eventListeners == null) {
+            eventListeners = Array(8)
+            listeners[type] = eventListeners
         }
-        listeners.add(listener)
+
+        if (listener in eventListeners) {
+            LOG.error { "Trying to add already existing listener of type $type: $listener" }
+        } else {
+            LOG.debug { "Adding listener of type $type: $listener" }
+            eventListeners.add(listener)
+        }
     }
 
+    fun removeListener(type: GameEventType, listener: GameEventListener) {
+        val eventListeners = listeners[type]
+        when {
+            eventListeners == null -> {
+                LOG.error { "Trying to remove listener $listener from non-existing listeners of type $type" }
+            }
+            listener !in eventListeners -> {
+                LOG.error { "Trying to remove non-existing listener of type $type: $listener" }
+            }
+            else -> {
+                LOG.debug { "Removing listener of type $type: $listener" }
+                eventListeners.removeValue(listener, true)
+            }
+        }
+    }
+
+    /**
+     * This function removes the [listener] from all [types][GameEventType]. It is
+     * slightly more efficient to use [removeListener] if you know the exact type(s).
+     */
     fun removeListener(listener: GameEventListener) {
-        if (listener in listeners) {
-            LOG.error { "Trying to remove non-existing listener: $listener" }
-            return
-        } else {
-            LOG.debug { "Removing listener: $listener" }
-        }
-        listeners.removeValue(listener, true)
+        LOG.debug { "Removing $listener from all types" }
+        listeners.values.forEach { it.removeValue(listener, true) }
     }
 
-    fun dispatchEvent(type: EventType, data: Any? = null) {
+    fun dispatchEvent(type: GameEventType, data: Any? = null) {
         LOG.debug { "Dispatch event $type with data: $data" }
-        listeners.forEach { it.onEvent(type, data) }
+        listeners[type]?.forEach { it.onEvent(type, data) }
     }
 }
