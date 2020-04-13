@@ -10,6 +10,7 @@ dependencies {
     api("io.github.libktx:ktx-app:${Versions.ktx}")
     implementation("io.github.libktx:ktx-ashley:${Versions.ktx}")
     implementation("io.github.libktx:ktx-assets-async:${Versions.ktx}")
+    implementation("io.github.libktx:ktx-collections:${Versions.ktx}")
     implementation("io.github.libktx:ktx-math:${Versions.ktx}")
     implementation("io.github.libktx:ktx-graphics:${Versions.ktx}")
     implementation("io.github.libktx:ktx-log:${Versions.ktx}")
