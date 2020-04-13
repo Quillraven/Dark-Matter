@@ -25,7 +25,9 @@ import ktx.log.logger
 import kotlin.math.min
 
 private val LOG = logger<PowerUpSystem>()
-private const val SPAWN_INTERVAL = 1.5f
+private const val MAX_SPAWN_INTERVAL = 1.5f
+private const val MIN_SPAWN_INTERVAL = 0.9f
+private const val POWER_UP_SPEED = -8.75f
 
 private class SpawnPattern(
     type1: PowerUpType = PowerUpType.NONE,
@@ -49,16 +51,23 @@ class PowerUpSystem(
     private var spawnTime = 0f
     private val spawnPatterns = gdxArrayOf(
         SpawnPattern(type1 = PowerUpType.SPEED_1, type2 = PowerUpType.SPEED_2, type5 = PowerUpType.SHIELD),
-        SpawnPattern(type1 = PowerUpType.SPEED_2, type2 = PowerUpType.LIFE, type4 = PowerUpType.SPEED_1),
-        SpawnPattern(type1 = PowerUpType.SPEED_1, type3 = PowerUpType.SPEED_1, type5 = PowerUpType.SPEED_1)
+        SpawnPattern(type1 = PowerUpType.SPEED_2, type2 = PowerUpType.LIFE, type5 = PowerUpType.SPEED_1),
+        SpawnPattern(type2 = PowerUpType.SPEED_1, type4 = PowerUpType.SPEED_1, type5 = PowerUpType.SPEED_1),
+        SpawnPattern(type2 = PowerUpType.SPEED_1, type4 = PowerUpType.SPEED_1),
+        SpawnPattern(
+            type1 = PowerUpType.SHIELD,
+            type2 = PowerUpType.SHIELD,
+            type4 = PowerUpType.LIFE,
+            type5 = PowerUpType.SPEED_2
+        )
     )
-    private val currentSpawnPattern = Array<PowerUpType>(5)
+    private val currentSpawnPattern = Array<PowerUpType>(spawnPatterns.size)
 
     override fun update(deltaTime: Float) {
         super.update(deltaTime)
         spawnTime -= deltaTime
         if (spawnTime <= 0f) {
-            spawnTime = SPAWN_INTERVAL
+            spawnTime = MathUtils.random(MIN_SPAWN_INTERVAL, MAX_SPAWN_INTERVAL)
 
             if (currentSpawnPattern.isEmpty) {
                 currentSpawnPattern.addAll(spawnPatterns[MathUtils.random(0, spawnPatterns.size - 1)].types)
@@ -73,7 +82,7 @@ class PowerUpSystem(
 
             engine.entity {
                 with<TransformComponent> {
-                    position.set(2f * MathUtils.random(0, 3) + 0.5f, 16f, 0f)
+                    position.set(2f * MathUtils.random(0, 4), 16f, 0f)
                     LOG.debug { "Spawn power of type $powerUpType at $position" }
                 }
                 with<PowerUpComponent> {
@@ -84,7 +93,7 @@ class PowerUpSystem(
                 }
                 with<GraphicComponent>()
                 with<MoveComponent> {
-                    speed.y = -7.75f
+                    speed.y = POWER_UP_SPEED
                 }
             }
         }
@@ -125,8 +134,8 @@ class PowerUpSystem(
             LOG.debug { "Picking up power of type ${powerUpCmp.type}" }
 
             when (powerUpCmp.type) {
-                PowerUpType.SPEED_1 -> player[MoveComponent.mapper]?.let { it.speed.y += 3f }
-                PowerUpType.SPEED_2 -> player[MoveComponent.mapper]?.let { it.speed.y += 4f }
+                PowerUpType.SPEED_1 -> player[MoveComponent.mapper]?.let { it.speed.y += 2.75f }
+                PowerUpType.SPEED_2 -> player[MoveComponent.mapper]?.let { it.speed.y += 3.5f }
                 PowerUpType.LIFE -> player[PlayerComponent.mapper]?.let {
                     it.life = min(it.maxLife, it.life + 25f)
                 }
