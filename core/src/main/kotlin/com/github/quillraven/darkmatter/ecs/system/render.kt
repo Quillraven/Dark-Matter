@@ -23,7 +23,7 @@ class RenderSystem(
     private val gameViewport: Viewport,
     private val camera: Camera = gameViewport.camera
 ) : SortedIteratingSystem(
-    allOf(GraphicComponent::class, TransformComponent::class).exclude(RemoveComponent::class).get(),
+    allOf(GraphicComponent::class, TransformComponent::class).get(),
     compareBy { entity -> entity[TransformComponent.mapper] }
 ) {
     override fun update(deltaTime: Float) {

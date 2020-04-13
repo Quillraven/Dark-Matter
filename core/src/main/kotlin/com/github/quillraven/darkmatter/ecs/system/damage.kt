@@ -31,7 +31,9 @@ class DamageSystem :
 
                     player.life -= damage
                     if (player.life <= 0f) {
-                        entity.add(engine.createComponent(RemoveComponent::class.java))
+                        entity.add(engine.createComponent(RemoveComponent::class.java).apply {
+                            delay = 1f
+                        })
                     }
                 }
             }

@@ -7,11 +7,13 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.quillraven.darkmatter.Game
 import com.github.quillraven.darkmatter.V_HEIGHT
 import com.github.quillraven.darkmatter.V_WIDTH
+import com.github.quillraven.darkmatter.ecs.component.AttachComponent
 import com.github.quillraven.darkmatter.ecs.component.FacingComponent
 import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
 import com.github.quillraven.darkmatter.ecs.component.MoveComponent
 import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
+import com.github.quillraven.darkmatter.ecs.system.AttachSystem
 import com.github.quillraven.darkmatter.ecs.system.DamageSystem
 import com.github.quillraven.darkmatter.ecs.system.HorizontalMoveSystem
 import com.github.quillraven.darkmatter.ecs.system.PlayerAnimationSystem
@@ -50,6 +52,7 @@ class GameScreen(
                 atlas.findRegion("ship_right")
             )
         )
+        addSystem(AttachSystem())
         addSystem(RenderSystem(batch, viewport))
         addSystem(RemoveSystem(gameEventManager))
     }
@@ -83,7 +86,9 @@ class GameScreen(
 
     private fun spawnPlayer() {
         respawn = false
-        engine.entity {
+
+        // ship
+        val ship = engine.entity {
             with<PlayerComponent>()
             with<FacingComponent>()
             with<MoveComponent>()
@@ -92,6 +97,20 @@ class GameScreen(
             }
             with<GraphicComponent>()
         }
+
+        // fire effect of ship
+        engine.entity {
+            with<TransformComponent>()
+            with<AttachComponent> {
+                entity = ship
+                offset.set(0f, -0.9f)
+            }
+            with<GraphicComponent> {
+                val atlas = assets.get<TextureAtlas>("graphics/graphics.atlas")
+                setSpriteRegion(atlas.findRegion("fire", 0))
+            }
+        }
+
         gameEventManager.dispatchEvent(EventType.PLAYER_SPAWN)
     }
 
