@@ -14,10 +14,10 @@ enum class AnimationType(
 ) {
     NONE(""),
     FIRE("fire"),
-    BOOST_1("orb_blue"),
-    BOOST_2("orb_yellow"),
+    BOOST_1("orb_blue", speed = 0.5f),
+    BOOST_2("orb_yellow", speed = 0.5f),
     LIFE("life"),
-    SHIELD("shield"),
+    SHIELD("shield", speed = 0.75f),
     DARK_MATTER("dark_matter", speed = 3f)
 }
 
