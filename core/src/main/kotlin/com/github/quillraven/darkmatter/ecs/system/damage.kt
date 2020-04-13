@@ -17,7 +17,7 @@ class DamageSystem :
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[TransformComponent.mapper]?.let { transform ->
             entity[PlayerComponent.mapper]?.let { player ->
-                if (transform.position.y <= 4f) {
+                if (transform.position.y <= 2f) {
                     var damage = DAMAGE_PER_SECOND * deltaTime
                     if (player.shield > 0f) {
                         val blockAmount = player.shield

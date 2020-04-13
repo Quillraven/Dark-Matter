@@ -9,21 +9,24 @@ import ktx.ashley.mapperFor
 
 enum class AnimationType(
     val atlasKey: String,
-    val playMode: Animation.PlayMode = Animation.PlayMode.LOOP
+    val playMode: Animation.PlayMode = Animation.PlayMode.LOOP,
+    val speed: Float = 1f
 ) {
     NONE(""),
-    FIRE("fire", Animation.PlayMode.LOOP_PINGPONG),
+    FIRE("fire"),
     BOOST_1("orb_blue"),
     BOOST_2("orb_yellow"),
     LIFE("life"),
-    SHIELD("shield")
+    SHIELD("shield"),
+    DARK_MATTER("dark_matter", speed = 3f)
 }
 
 class Animation2D(
     val type: AnimationType,
     keyFrames: Array<out TextureRegion>,
-    playMode: PlayMode = PlayMode.LOOP
-) : Animation<TextureRegion>(1 / 20f, keyFrames, playMode)
+    playMode: PlayMode = PlayMode.LOOP,
+    speed: Float = 1f
+) : Animation<TextureRegion>((1 / 20f) / speed, keyFrames, playMode)
 
 class AnimationComponent : Component, Pool.Poolable {
     var type = AnimationType.NONE

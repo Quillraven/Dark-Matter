@@ -71,6 +71,7 @@ class GameScreen(
         LOG.debug { "Show" }
         gameEventManager.addListener(GameEventType.PLAYER_SPAWN, this)
         gameEventManager.addListener(GameEventType.PLAYER_DEATH, this)
+        spawnDarkMatter()
     }
 
     override fun hide() {
@@ -122,6 +123,18 @@ class GameScreen(
         }
 
         gameEventManager.dispatchEvent(GameEventType.PLAYER_SPAWN)
+    }
+
+    private fun spawnDarkMatter() {
+        engine.entity {
+            with<TransformComponent> {
+                size.set(9f, 2f)
+            }
+            with<AnimationComponent> {
+                type = AnimationType.DARK_MATTER
+            }
+            with<GraphicComponent>()
+        }
     }
 
     override fun onEvent(type: GameEventType, data: GameEvent?) {
