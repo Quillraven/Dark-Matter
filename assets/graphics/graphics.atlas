@@ -25,51 +25,65 @@ fire
   orig: 8, 8
   offset: 0, 0
   index: 1
-orb_blue
+life
   rotate: false
   xy: 31, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
-  index: 0
+  index: -1
 orb_blue
   rotate: false
   xy: 41, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
-  index: 1
-orb_yellow
+  index: 0
+orb_blue
   rotate: false
   xy: 51, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
-  index: 0
+  index: 1
 orb_yellow
   rotate: false
   xy: 61, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
-  index: 1
-ship_base
+  index: 0
+orb_yellow
   rotate: false
   xy: 71, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
-  index: -1
-ship_left
+  index: 1
+shield
   rotate: false
   xy: 81, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-ship_right
+ship_base
   rotate: false
   xy: 91, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+ship_left
+  rotate: false
+  xy: 101, 1
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+ship_right
+  rotate: false
+  xy: 111, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
