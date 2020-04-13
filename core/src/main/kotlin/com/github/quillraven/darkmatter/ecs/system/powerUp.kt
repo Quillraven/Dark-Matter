@@ -1,0 +1,145 @@
+package com.github.quillraven.darkmatter.ecs.system
+
+import com.badlogic.ashley.core.Entity
+import com.badlogic.ashley.systems.IteratingSystem
+import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.utils.Array
+import com.github.quillraven.darkmatter.ecs.component.AnimationComponent
+import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
+import com.github.quillraven.darkmatter.ecs.component.MoveComponent
+import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
+import com.github.quillraven.darkmatter.ecs.component.PowerUpComponent
+import com.github.quillraven.darkmatter.ecs.component.PowerUpType
+import com.github.quillraven.darkmatter.ecs.component.RemoveComponent
+import com.github.quillraven.darkmatter.ecs.component.TransformComponent
+import com.github.quillraven.darkmatter.event.GameEventManager
+import com.github.quillraven.darkmatter.event.GameEventPowerUp
+import com.github.quillraven.darkmatter.event.GameEventType
+import ktx.ashley.allOf
+import ktx.ashley.entity
+import ktx.ashley.exclude
+import ktx.ashley.get
+import ktx.collections.gdxArrayOf
+import ktx.log.logger
+import kotlin.math.min
+
+private val LOG = logger<PowerUpSystem>()
+private const val SPAWN_INTERVAL = 1.5f
+
+private class SpawnPattern(
+    type1: PowerUpType = PowerUpType.NONE,
+    type2: PowerUpType = PowerUpType.NONE,
+    type3: PowerUpType = PowerUpType.NONE,
+    type4: PowerUpType = PowerUpType.NONE,
+    type5: PowerUpType = PowerUpType.NONE,
+    val types: Array<PowerUpType> = gdxArrayOf(type1, type2, type3, type4, type5)
+)
+
+class PowerUpSystem(
+    private val gameEventManager: GameEventManager
+) : IteratingSystem(allOf(PowerUpComponent::class, TransformComponent::class).exclude(RemoveComponent::class).get()) {
+    private val playerBoundingRect = Rectangle()
+    private val powerUpBoundingRect = Rectangle()
+    private val playerEntities by lazy {
+        engine.getEntitiesFor(
+            allOf(PlayerComponent::class).exclude(RemoveComponent::class).get()
+        )
+    }
+    private var spawnTime = 0f
+    private val spawnPatterns = gdxArrayOf(
+        SpawnPattern(type1 = PowerUpType.SPEED_1, type2 = PowerUpType.SPEED_2, type5 = PowerUpType.SHIELD),
+        SpawnPattern(type1 = PowerUpType.SPEED_2, type2 = PowerUpType.LIFE, type4 = PowerUpType.SPEED_1),
+        SpawnPattern(type1 = PowerUpType.SPEED_1, type3 = PowerUpType.SPEED_1, type5 = PowerUpType.SPEED_1)
+    )
+    private val currentSpawnPattern = Array<PowerUpType>(5)
+
+    override fun update(deltaTime: Float) {
+        super.update(deltaTime)
+        spawnTime -= deltaTime
+        if (spawnTime <= 0f) {
+            spawnTime = SPAWN_INTERVAL
+
+            if (currentSpawnPattern.isEmpty) {
+                currentSpawnPattern.addAll(spawnPatterns[MathUtils.random(0, spawnPatterns.size - 1)].types)
+                LOG.debug { "Next pattern: $currentSpawnPattern" }
+            }
+
+            val powerUpType = currentSpawnPattern.removeIndex(0)
+            if (powerUpType == PowerUpType.NONE) {
+                // nothing to spawn
+                return
+            }
+
+            engine.entity {
+                with<TransformComponent> {
+                    position.set(2f * MathUtils.random(0, 3) + 0.5f, 16f, 0f)
+                    LOG.debug { "Spawn power of type $powerUpType at $position" }
+                }
+                with<PowerUpComponent> {
+                    type = powerUpType
+                }
+                with<AnimationComponent> {
+                    type = powerUpType.animationType
+                }
+                with<GraphicComponent>()
+                with<MoveComponent> {
+                    speed.y = -7.75f
+                }
+            }
+        }
+    }
+
+    override fun processEntity(entity: Entity, deltaTime: Float) {
+        entity[TransformComponent.mapper]?.let { transform ->
+            if (transform.position.y <= 0f) {
+                entity.add(engine.createComponent(RemoveComponent::class.java))
+                return
+            }
+
+            playerEntities.forEach { player ->
+                player[TransformComponent.mapper]?.let { playerTransform ->
+                    playerBoundingRect.set(
+                        playerTransform.position.x,
+                        playerTransform.position.y,
+                        playerTransform.size.x,
+                        playerTransform.size.y
+                    )
+                    powerUpBoundingRect.set(
+                        transform.position.x,
+                        transform.position.y,
+                        transform.size.x,
+                        transform.size.y
+                    )
+
+                    if (playerBoundingRect.overlaps(powerUpBoundingRect)) {
+                        collectPowerUp(player, entity)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectPowerUp(player: Entity, powerUp: Entity) {
+        powerUp[PowerUpComponent.mapper]?.let { powerUpCmp ->
+            LOG.debug { "Picking up power of type ${powerUpCmp.type}" }
+
+            when (powerUpCmp.type) {
+                PowerUpType.SPEED_1 -> player[MoveComponent.mapper]?.let { it.speed.y += 3f }
+                PowerUpType.SPEED_2 -> player[MoveComponent.mapper]?.let { it.speed.y += 4f }
+                PowerUpType.LIFE -> player[PlayerComponent.mapper]?.let {
+                    it.life = min(it.maxLife, it.life + 25f)
+                }
+                PowerUpType.SHIELD -> player[PlayerComponent.mapper]?.let {
+                    it.shield = min(it.maxShield, it.shield + 25f)
+                }
+                else -> LOG.error { "Unsupported power of type ${powerUpCmp.type}" }
+            }
+            powerUp.add(engine.createComponent(RemoveComponent::class.java))
+
+            gameEventManager.dispatchEvent(GameEventType.POWER_UP, GameEventPowerUp.apply {
+                type = powerUpCmp.type
+            })
+        }
+    }
+}

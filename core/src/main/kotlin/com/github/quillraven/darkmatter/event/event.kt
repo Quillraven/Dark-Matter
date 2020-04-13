@@ -1,6 +1,7 @@
 package com.github.quillraven.darkmatter.event
 
 import com.badlogic.gdx.utils.Array
+import com.github.quillraven.darkmatter.ecs.component.PowerUpType
 import ktx.log.logger
 import java.util.*
 
@@ -8,11 +9,22 @@ private val LOG = logger<GameEventManager>()
 
 enum class GameEventType {
     PLAYER_SPAWN,
-    PLAYER_DEATH
+    PLAYER_DEATH,
+    POWER_UP
+}
+
+interface GameEvent
+
+object GameEventPlayerDeath : GameEvent {
+    var distance = 0f
+}
+
+object GameEventPowerUp : GameEvent {
+    var type = PowerUpType.NONE
 }
 
 interface GameEventListener {
-    fun onEvent(type: GameEventType, data: Any? = null)
+    fun onEvent(type: GameEventType, data: GameEvent? = null)
 }
 
 class GameEventManager {
@@ -58,7 +70,7 @@ class GameEventManager {
         listeners.values.forEach { it.removeValue(listener, true) }
     }
 
-    fun dispatchEvent(type: GameEventType, data: Any? = null) {
+    fun dispatchEvent(type: GameEventType, data: GameEvent? = null) {
         LOG.debug { "Dispatch event $type with data: $data" }
         listeners[type]?.forEach { it.onEvent(type, data) }
     }

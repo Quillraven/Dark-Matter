@@ -14,28 +14,42 @@ import ktx.ashley.get
 import kotlin.math.abs
 
 private const val ACCELERATION = 2.25f
-private const val MAX_SPEED = 0.75f
+private const val MAX_NEG_PLAYER_SPEED = 0.75f
+private const val MAX_POS_PLAYER_SPEED = 5f
 
 class VerticalMoveSystem :
     IteratingSystem(
-        allOf(PlayerComponent::class, TransformComponent::class, MoveComponent::class).exclude(
-            RemoveComponent::class
-        ).get()
+        allOf(TransformComponent::class, MoveComponent::class).exclude(RemoveComponent::class).get()
     ) {
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[MoveComponent.mapper]?.let { move ->
             entity[TransformComponent.mapper]?.let { transform ->
-                entity[PlayerComponent.mapper]?.let { player ->
-                    move.speed.y = MathUtils.clamp(move.speed.y + ACCELERATION * deltaTime, -MAX_SPEED, MAX_SPEED)
-                    val oldY = transform.position.y
-                    transform.position.y = MathUtils.clamp(
-                        transform.position.y - move.speed.y * deltaTime,
-                        0f,
-                        V_HEIGHT - transform.size.y
+                val player = entity[PlayerComponent.mapper]
+                if (player != null) {
+                    move.speed.y = MathUtils.clamp(
+                        move.speed.y - ACCELERATION * deltaTime,
+                        -MAX_NEG_PLAYER_SPEED,
+                        MAX_POS_PLAYER_SPEED
                     )
+                    val oldY = transform.position.y
+                    moveEntityDown(transform, move, deltaTime)
                     player.distance += abs(transform.position.y - oldY)
+                } else {
+                    moveEntityDown(transform, move, deltaTime)
                 }
             }
         }
+    }
+
+    private fun moveEntityDown(
+        transform: TransformComponent,
+        move: MoveComponent,
+        deltaTime: Float
+    ) {
+        transform.position.y = MathUtils.clamp(
+            transform.position.y + move.speed.y * deltaTime,
+            0f,
+            V_HEIGHT + 1f - transform.size.y
+        )
     }
 }

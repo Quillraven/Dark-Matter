@@ -18,12 +18,15 @@ import com.github.quillraven.darkmatter.ecs.component.TransformComponent
 import com.github.quillraven.darkmatter.ecs.system.AnimationSystem
 import com.github.quillraven.darkmatter.ecs.system.AttachSystem
 import com.github.quillraven.darkmatter.ecs.system.DamageSystem
+import com.github.quillraven.darkmatter.ecs.system.DebugSystem
 import com.github.quillraven.darkmatter.ecs.system.HorizontalMoveSystem
 import com.github.quillraven.darkmatter.ecs.system.PlayerAnimationSystem
 import com.github.quillraven.darkmatter.ecs.system.PlayerInputSystem
+import com.github.quillraven.darkmatter.ecs.system.PowerUpSystem
 import com.github.quillraven.darkmatter.ecs.system.RemoveSystem
 import com.github.quillraven.darkmatter.ecs.system.RenderSystem
 import com.github.quillraven.darkmatter.ecs.system.VerticalMoveSystem
+import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventListener
 import com.github.quillraven.darkmatter.event.GameEventManager
 import com.github.quillraven.darkmatter.event.GameEventType
@@ -44,6 +47,8 @@ class GameScreen(
     private val engine = PooledEngine().apply {
         val atlas = assets.get<TextureAtlas>("graphics/graphics.atlas")
 
+        addSystem(DebugSystem())
+        addSystem(PowerUpSystem(gameEventManager))
         addSystem(PlayerInputSystem(viewport))
         addSystem(HorizontalMoveSystem())
         addSystem(VerticalMoveSystem())
@@ -98,7 +103,7 @@ class GameScreen(
             with<FacingComponent>()
             with<MoveComponent>()
             with<TransformComponent> {
-                position.set(V_WIDTH * 0.5f - size.x * 0.5f, V_HEIGHT * 0.5f - size.y * 0.5f, 0f)
+                position.set(V_WIDTH * 0.5f - size.x * 0.5f, V_HEIGHT * 0.5f - size.y * 0.5f, 1f)
             }
             with<GraphicComponent>()
         }
@@ -119,12 +124,15 @@ class GameScreen(
         gameEventManager.dispatchEvent(GameEventType.PLAYER_SPAWN)
     }
 
-    override fun onEvent(type: GameEventType, data: Any?) {
+    override fun onEvent(type: GameEventType, data: GameEvent?) {
         when (type) {
             GameEventType.PLAYER_SPAWN -> LOG.debug { "Spawn new player" }
             GameEventType.PLAYER_DEATH -> {
                 LOG.debug { "Player died with a distance of $data" }
                 respawn = true
+            }
+            else -> {
+                // ignore
             }
         }
     }

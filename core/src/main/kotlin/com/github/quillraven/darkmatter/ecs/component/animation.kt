@@ -12,7 +12,11 @@ enum class AnimationType(
     val playMode: Animation.PlayMode = Animation.PlayMode.LOOP
 ) {
     NONE(""),
-    FIRE("fire", Animation.PlayMode.LOOP_PINGPONG)
+    FIRE("fire", Animation.PlayMode.LOOP_PINGPONG),
+    BOOST_1("orb_blue"),
+    BOOST_2("orb_yellow"),
+    LIFE("life"),
+    SHIELD("shield")
 }
 
 class Animation2D(
