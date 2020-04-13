@@ -17,10 +17,18 @@ interface GameEvent
 
 object GameEventPlayerDeath : GameEvent {
     var distance = 0f
+
+    override fun toString(): String {
+        return "GameEventPlayerDeath(distance=$distance)"
+    }
 }
 
 object GameEventPowerUp : GameEvent {
     var type = PowerUpType.NONE
+
+    override fun toString(): String {
+        return "GameEventPowerUp(type=$type)"
+    }
 }
 
 interface GameEventListener {
