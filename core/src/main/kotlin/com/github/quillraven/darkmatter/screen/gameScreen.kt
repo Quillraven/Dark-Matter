@@ -7,12 +7,15 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.quillraven.darkmatter.Game
 import com.github.quillraven.darkmatter.V_HEIGHT
 import com.github.quillraven.darkmatter.V_WIDTH
+import com.github.quillraven.darkmatter.ecs.component.AnimationComponent
+import com.github.quillraven.darkmatter.ecs.component.AnimationType
 import com.github.quillraven.darkmatter.ecs.component.AttachComponent
 import com.github.quillraven.darkmatter.ecs.component.FacingComponent
 import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
 import com.github.quillraven.darkmatter.ecs.component.MoveComponent
 import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
+import com.github.quillraven.darkmatter.ecs.system.AnimationSystem
 import com.github.quillraven.darkmatter.ecs.system.AttachSystem
 import com.github.quillraven.darkmatter.ecs.system.DamageSystem
 import com.github.quillraven.darkmatter.ecs.system.HorizontalMoveSystem
@@ -21,9 +24,9 @@ import com.github.quillraven.darkmatter.ecs.system.PlayerInputSystem
 import com.github.quillraven.darkmatter.ecs.system.RemoveSystem
 import com.github.quillraven.darkmatter.ecs.system.RenderSystem
 import com.github.quillraven.darkmatter.ecs.system.VerticalMoveSystem
-import com.github.quillraven.darkmatter.event.GameEventType
 import com.github.quillraven.darkmatter.event.GameEventListener
 import com.github.quillraven.darkmatter.event.GameEventManager
+import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.app.KtxScreen
 import ktx.ashley.entity
 import ktx.assets.async.AssetStorage
@@ -53,6 +56,7 @@ class GameScreen(
             )
         )
         addSystem(AttachSystem())
+        addSystem(AnimationSystem(atlas))
         addSystem(RenderSystem(batch, viewport))
         addSystem(RemoveSystem(gameEventManager))
     }
@@ -60,8 +64,8 @@ class GameScreen(
 
     override fun show() {
         LOG.debug { "Show" }
-        gameEventManager.addListener(GameEventType.PLAYER_SPAWN,this)
-        gameEventManager.addListener(GameEventType.PLAYER_DEATH,this)
+        gameEventManager.addListener(GameEventType.PLAYER_SPAWN, this)
+        gameEventManager.addListener(GameEventType.PLAYER_DEATH, this)
     }
 
     override fun hide() {
@@ -106,9 +110,9 @@ class GameScreen(
                 entity = ship
                 offset.set(0f, -0.9f)
             }
-            with<GraphicComponent> {
-                val atlas = assets.get<TextureAtlas>("graphics/graphics.atlas")
-                setSpriteRegion(atlas.findRegion("fire", 0))
+            with<GraphicComponent>()
+            with<AnimationComponent> {
+                type = AnimationType.FIRE
             }
         }
 
