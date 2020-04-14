@@ -1,8 +1,10 @@
 package com.github.quillraven.darkmatter.screen
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.loaders.ShaderProgramLoader
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.quillraven.darkmatter.Game
 import kotlinx.coroutines.joinAll
@@ -26,7 +28,14 @@ class LoadingScreen(
         val timeToLoadAndInit = measureTimeMillis {
             val assetRefs = listOf(
                 assets.loadAsync<TextureAtlas>("graphics/graphics.atlas"),
-                assets.loadAsync<Texture>("graphics/background.png")
+                assets.loadAsync<Texture>("graphics/background.png"),
+                assets.loadAsync<ShaderProgram>(
+                    "outlineShader",
+                    parameters = ShaderProgramLoader.ShaderProgramParameter().apply {
+                        vertexFile = "shader/default.vert"
+                        fragmentFile = "shader/outline.frag"
+                        logOnCompileFailure
+                    })
             )
             KtxAsync.launch {
                 assetRefs.joinAll()
