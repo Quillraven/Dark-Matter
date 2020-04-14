@@ -13,11 +13,19 @@ class DebugSystem : IntervalIteratingSystem(allOf(PlayerComponent::class).get(),
     override fun processEntity(entity: Entity) {
         entity[PlayerComponent.mapper]?.let { player ->
             entity[TransformComponent.mapper]?.let { transform ->
-                if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
-                    // kill player
-                    transform.position.y = 1f
-                    player.life = 1f
-                    player.shield = 0f
+                when {
+                    Gdx.input.isKeyPressed(Input.Keys.NUM_1) -> {
+                        // kill player
+                        transform.position.y = 1f
+                        player.life = 1f
+                        player.shield = 0f
+                    }
+                    Gdx.input.isKeyPressed(Input.Keys.NUM_2) -> {
+                        player.shield = 100f
+                    }
+                    Gdx.input.isKeyPressed(Input.Keys.NUM_3) -> {
+                        player.shield = 0f
+                    }
                 }
 
                 Gdx.graphics.setTitle("Dark Matter Debug - pos:${transform.position}, life:${player.life}, shield:${player.shield}")
