@@ -574,21 +574,21 @@ shield
 ship_base
   rotate: false
   xy: 261, 209
-  size: 8, 8
-  orig: 8, 8
+  size: 10, 9
+  orig: 10, 9
   offset: 0, 0
   index: -1
 ship_left
   rotate: false
   xy: 313, 209
-  size: 8, 8
-  orig: 8, 8
+  size: 10, 9
+  orig: 10, 9
   offset: 0, 0
   index: -1
 ship_right
   rotate: false
   xy: 365, 209
-  size: 8, 8
-  orig: 8, 8
+  size: 10, 9
+  orig: 10, 9
   offset: 0, 0
   index: -1

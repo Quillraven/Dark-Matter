@@ -3,6 +3,7 @@ package com.github.quillraven.darkmatter.screen
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.quillraven.darkmatter.Game
@@ -43,7 +44,8 @@ class GameScreen(
     private val batch: Batch = game.batch,
     private val assets: AssetStorage = game.assets,
     private val gameEventManager: GameEventManager = game.gameEventManager,
-    private val stage: Stage = game.stage
+    private val stage: Stage = game.stage,
+    private val outlineShader: ShaderProgram = game.assets["outlineShader"]
 ) : KtxScreen, GameEventListener {
     private val viewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
     private val engine = PooledEngine().apply {
@@ -68,6 +70,8 @@ class GameScreen(
             RenderSystem(
                 stage,
                 batch,
+                outlineShader,
+                game.screenResolution,
                 viewport,
                 assets["graphics/background.png"]
             )
@@ -115,6 +119,7 @@ class GameScreen(
             with<MoveComponent>()
             with<TransformComponent> {
                 position.set(V_WIDTH * 0.5f - size.x * 0.5f, V_HEIGHT * 0.5f - size.y * 0.5f, 1f)
+                size.set(10f / 8f, 9f / 8f)
             }
             with<GraphicComponent>()
         }
@@ -124,7 +129,7 @@ class GameScreen(
             with<TransformComponent>()
             with<AttachComponent> {
                 entity = ship
-                offset.set(0f, -0.9f)
+                offset.set(1f / 8f, -0.7f)
             }
             with<GraphicComponent>()
             with<AnimationComponent> {
