@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.profiling.GLProfiler
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.quillraven.darkmatter.event.GameEventManager
@@ -23,7 +22,7 @@ const val V_WIDTH = 9
 const val V_HEIGHT = 16
 const val UNIT_SCALE = 1 / 8f
 
-class Game(val screenResolution: Vector2) : KtxGame<KtxScreen>() {
+class Game : KtxGame<KtxScreen>() {
     val batch: Batch by lazy { SpriteBatch() }
     val stage: Stage by lazy {
         Stage(FitViewport(V_WIDTH_PIXELS.toFloat(), V_HEIGHT_PIXELS.toFloat()), batch)
@@ -38,14 +37,6 @@ class Game(val screenResolution: Vector2) : KtxGame<KtxScreen>() {
     override fun create() {
         Gdx.app.logLevel = Application.LOG_DEBUG
         profiler.enable()
-
-        if (screenResolution.isZero) {
-            // game launched from android -> update with real screen resolution
-            // we cannot use the same approach for desktop because width and height returns
-            // the size of the window instead of the display size. Therefore, for desktop we
-            // pass those values in from the outside
-            screenResolution.set(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat())
-        }
 
         addScreen(LoadingScreen(this))
         setScreen<LoadingScreen>()

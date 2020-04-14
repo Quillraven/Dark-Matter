@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
@@ -21,6 +20,7 @@ import ktx.graphics.use
 import ktx.log.logger
 import ktx.math.component1
 import ktx.math.component2
+import ktx.math.vec2
 import ktx.math.vec3
 
 private val LOG = logger<RenderSystem>()
@@ -29,7 +29,6 @@ class RenderSystem(
     private val stage: Stage,
     private val batch: Batch,
     private val outlineShader: ShaderProgram,
-    private val screenResolution: Vector2,
     private val gameViewport: Viewport,
     backgroundTexture: Texture,
     private val camera: Camera = gameViewport.camera
@@ -40,7 +39,7 @@ class RenderSystem(
     private val background = Sprite(backgroundTexture.apply {
         setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
     })
-    private val screenSizeLoc = outlineShader.getUniformLocation("u_screenSize")
+    private val textureSizeLoc = outlineShader.getUniformLocation("u_textureSize")
     private val outlineColorLoc = outlineShader.getUniformLocation("u_outlineColor")
     private val outlineColor = vec3(0f, 113f / 255f, 214f / 255f)
     private val playerEntities by lazy {
@@ -69,12 +68,21 @@ class RenderSystem(
         // render player with outline shader in case he has a shield
         batch.use(camera.combined) {
             it.shader = outlineShader
-            outlineShader.setUniformf(screenSizeLoc, screenResolution)
             outlineShader.setUniformf(outlineColorLoc, outlineColor)
             playerEntities.forEach { entity ->
                 entity[PlayerComponent.mapper]?.let { player ->
                     if (player.shield > 0f) {
-                        entity[GraphicComponent.mapper]?.sprite?.draw(it)
+                        entity[GraphicComponent.mapper]?.let { graphic ->
+                            graphic.sprite.run {
+                                outlineShader.setUniformf(
+                                    textureSizeLoc, vec2(
+                                        texture.width.toFloat(),
+                                        texture.height.toFloat()
+                                    )
+                                )
+                                draw(it)
+                            }
+                        }
                     }
                 }
             }

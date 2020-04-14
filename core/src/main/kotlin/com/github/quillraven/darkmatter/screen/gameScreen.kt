@@ -71,7 +71,6 @@ class GameScreen(
                 stage,
                 batch,
                 outlineShader,
-                game.screenResolution,
                 viewport,
                 assets["graphics/background.png"]
             )
