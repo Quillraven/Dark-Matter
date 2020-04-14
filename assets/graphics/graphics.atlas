@@ -1,6 +1,6 @@
 
 graphics.png
-size: 1024,256
+size: 1024,512
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -431,107 +431,163 @@ error
   orig: 8, 8
   offset: 0, 0
   index: 0
-fire
+explosion
   rotate: false
   xy: 209, 157
-  size: 8, 8
-  orig: 8, 8
+  size: 16, 16
+  orig: 16, 16
   offset: 0, 0
   index: 0
-fire
+explosion
   rotate: false
   xy: 261, 157
-  size: 8, 8
-  orig: 8, 8
+  size: 16, 16
+  orig: 16, 16
   offset: 0, 0
   index: 1
-life
+explosion
   rotate: false
   xy: 313, 157
-  size: 8, 8
-  orig: 8, 8
-  offset: 0, 0
-  index: 0
-life
-  rotate: false
-  xy: 365, 157
-  size: 8, 8
-  orig: 8, 8
-  offset: 0, 0
-  index: 1
-life
-  rotate: false
-  xy: 417, 157
-  size: 8, 8
-  orig: 8, 8
+  size: 16, 16
+  orig: 16, 16
   offset: 0, 0
   index: 2
-life
+explosion
   rotate: false
-  xy: 469, 157
-  size: 8, 8
-  orig: 8, 8
+  xy: 365, 157
+  size: 16, 16
+  orig: 16, 16
   offset: 0, 0
   index: 3
-orb_blue
+explosion
+  rotate: false
+  xy: 417, 157
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 4
+explosion
+  rotate: false
+  xy: 469, 157
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: 5
+explosion
   rotate: false
   xy: 521, 157
-  size: 8, 8
-  orig: 8, 8
+  size: 16, 16
+  orig: 16, 16
   offset: 0, 0
-  index: 0
-orb_blue
+  index: 6
+explosion
   rotate: false
   xy: 573, 157
-  size: 8, 8
-  orig: 8, 8
+  size: 16, 16
+  orig: 16, 16
   offset: 0, 0
-  index: 1
-orb_yellow
+  index: 7
+fire
   rotate: false
   xy: 625, 157
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: 0
-orb_yellow
+fire
   rotate: false
   xy: 677, 157
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: 1
-shield
+life
   rotate: false
   xy: 729, 157
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: 0
-shield
+life
   rotate: false
   xy: 781, 157
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: 1
-ship_base
+life
   rotate: false
   xy: 833, 157
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 2
+life
+  rotate: false
+  xy: 885, 157
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 3
+orb_blue
+  rotate: false
+  xy: 937, 157
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 0
+orb_blue
+  rotate: false
+  xy: 1, 209
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+orb_yellow
+  rotate: false
+  xy: 53, 209
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 0
+orb_yellow
+  rotate: false
+  xy: 105, 209
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+shield
+  rotate: false
+  xy: 157, 209
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 0
+shield
+  rotate: false
+  xy: 209, 209
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: 1
+ship_base
+  rotate: false
+  xy: 261, 209
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 ship_left
   rotate: false
-  xy: 885, 157
+  xy: 313, 209
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 ship_right
   rotate: false
-  xy: 937, 157
+  xy: 365, 209
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
