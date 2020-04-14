@@ -5,15 +5,15 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntityListener
 import com.badlogic.ashley.systems.IteratingSystem
 import com.github.quillraven.darkmatter.ecs.component.AttachComponent
+import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
 import com.github.quillraven.darkmatter.ecs.component.RemoveComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
 import ktx.ashley.allOf
-import ktx.ashley.exclude
 import ktx.ashley.get
 
 class AttachSystem :
     EntityListener,
-    IteratingSystem(allOf(AttachComponent::class, TransformComponent::class).exclude(RemoveComponent::class).get()) {
+    IteratingSystem(allOf(AttachComponent::class, TransformComponent::class, GraphicComponent::class).get()) {
 
     override fun addedToEngine(engine: Engine) {
         super.addedToEngine(engine)
@@ -27,6 +27,7 @@ class AttachSystem :
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[AttachComponent.mapper]?.let { attach ->
+            // update position
             entity[TransformComponent.mapper]?.let { transform ->
                 attach.entity[TransformComponent.mapper]?.let { attachTransform ->
                     transform.position.set(
@@ -34,6 +35,13 @@ class AttachSystem :
                         attachTransform.position.y + attach.offset.y,
                         transform.position.z
                     )
+                }
+            }
+
+            // update graphic alpha
+            entity[GraphicComponent.mapper]?.let { graphic ->
+                attach.entity[GraphicComponent.mapper]?.let { attachGraphic ->
+                    graphic.sprite.setAlpha(attachGraphic.sprite.color.a)
                 }
             }
         }

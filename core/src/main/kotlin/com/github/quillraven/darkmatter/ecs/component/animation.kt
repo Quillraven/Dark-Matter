@@ -18,7 +18,8 @@ enum class AnimationType(
     BOOST_2("orb_yellow", speed = 0.5f),
     LIFE("life"),
     SHIELD("shield", speed = 0.75f),
-    DARK_MATTER("dark_matter", speed = 3f)
+    DARK_MATTER("dark_matter", speed = 3f),
+    EXPLOSION("explosion", Animation.PlayMode.NORMAL, 0.5f)
 }
 
 class Animation2D(
