@@ -10,6 +10,7 @@ private val LOG = logger<GameEventManager>()
 enum class GameEventType {
     PLAYER_SPAWN,
     PLAYER_DEATH,
+    PLAYER_DAMAGED,
     POWER_UP
 }
 

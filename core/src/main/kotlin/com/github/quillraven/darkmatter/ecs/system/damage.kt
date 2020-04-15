@@ -8,6 +8,8 @@ import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
 import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
 import com.github.quillraven.darkmatter.ecs.component.RemoveComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
+import com.github.quillraven.darkmatter.event.GameEventManager
+import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.ashley.allOf
 import ktx.ashley.entity
 import ktx.ashley.exclude
@@ -16,7 +18,9 @@ import kotlin.math.max
 
 private const val DAMAGE_PER_SECOND = 25f
 
-class DamageSystem :
+class DamageSystem(
+    private val gameEventManager: GameEventManager
+) :
     IteratingSystem(allOf(PlayerComponent::class, TransformComponent::class).exclude(RemoveComponent::class).get()) {
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[TransformComponent.mapper]?.let { transform ->
@@ -34,6 +38,7 @@ class DamageSystem :
                     }
 
                     player.life -= damage
+                    gameEventManager.dispatchEvent(GameEventType.PLAYER_DAMAGED)
                     if (player.life <= 0f) {
                         entity.add(engine.createComponent(RemoveComponent::class.java).apply {
                             delay = 1f

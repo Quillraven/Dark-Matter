@@ -19,6 +19,7 @@ import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
 import com.github.quillraven.darkmatter.ecs.system.AnimationSystem
 import com.github.quillraven.darkmatter.ecs.system.AttachSystem
+import com.github.quillraven.darkmatter.ecs.system.CameraShakeSystem
 import com.github.quillraven.darkmatter.ecs.system.DamageSystem
 import com.github.quillraven.darkmatter.ecs.system.DebugSystem
 import com.github.quillraven.darkmatter.ecs.system.HorizontalMoveSystem
@@ -51,12 +52,12 @@ class GameScreen(
     private val engine = PooledEngine().apply {
         val atlas = assets.get<TextureAtlas>("graphics/graphics.atlas")
 
-        addSystem(DebugSystem())
+        addSystem(DebugSystem(gameEventManager))
         addSystem(PowerUpSystem(gameEventManager))
         addSystem(PlayerInputSystem(viewport))
         addSystem(HorizontalMoveSystem())
         addSystem(VerticalMoveSystem())
-        addSystem(DamageSystem())
+        addSystem(DamageSystem(gameEventManager))
         addSystem(
             PlayerAnimationSystem(
                 atlas.findRegion("ship_base"),
@@ -66,6 +67,7 @@ class GameScreen(
         )
         addSystem(AttachSystem())
         addSystem(AnimationSystem(atlas))
+        addSystem(CameraShakeSystem(viewport.camera, gameEventManager))
         addSystem(
             RenderSystem(
                 stage,
