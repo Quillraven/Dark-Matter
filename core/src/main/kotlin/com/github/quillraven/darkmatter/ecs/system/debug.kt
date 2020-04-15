@@ -6,10 +6,14 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
+import com.github.quillraven.darkmatter.event.GameEventManager
+import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.ashley.allOf
 import ktx.ashley.get
 
-class DebugSystem : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 0.25f) {
+class DebugSystem(
+    private val gameEventManager: GameEventManager
+) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 0.25f) {
     override fun processEntity(entity: Entity) {
         entity[PlayerComponent.mapper]?.let { player ->
             entity[TransformComponent.mapper]?.let { transform ->
@@ -25,6 +29,15 @@ class DebugSystem : IntervalIteratingSystem(allOf(PlayerComponent::class).get(),
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_3) -> {
                         player.shield = 0f
+                    }
+                    Gdx.input.isKeyPressed(Input.Keys.NUM_4) -> {
+                        engine.getSystem(VerticalMoveSystem::class.java).setProcessing(false)
+                    }
+                    Gdx.input.isKeyPressed(Input.Keys.NUM_5) -> {
+                        engine.getSystem(VerticalMoveSystem::class.java).setProcessing(true)
+                    }
+                    Gdx.input.isKeyPressed(Input.Keys.NUM_6) -> {
+                        gameEventManager.dispatchEvent(GameEventType.PLAYER_DAMAGED)
                     }
                 }
 
