@@ -72,6 +72,7 @@ class GameScreen(
                 batch,
                 outlineShader,
                 viewport,
+                gameEventManager,
                 assets["graphics/background.png"]
             )
         )
