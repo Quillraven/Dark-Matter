@@ -1,5 +1,6 @@
 package com.github.quillraven.darkmatter.event
 
+import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.utils.Array
 import com.github.quillraven.darkmatter.ecs.component.PowerUpType
 import ktx.log.logger
@@ -16,6 +17,14 @@ enum class GameEventType {
 
 interface GameEvent
 
+object GameEventPlayerDamaged : GameEvent {
+    lateinit var player: Entity
+
+    override fun toString(): String {
+        return "GameEventPlayerDamaged(player=$player)"
+    }
+}
+
 object GameEventPlayerDeath : GameEvent {
     var distance = 0f
 
@@ -25,10 +34,11 @@ object GameEventPlayerDeath : GameEvent {
 }
 
 object GameEventPowerUp : GameEvent {
+    lateinit var player: Entity
     var type = PowerUpType.NONE
 
     override fun toString(): String {
-        return "GameEventPowerUp(type=$type)"
+        return "GameEventPowerUp(player=$player, type=$type)"
     }
 }
 

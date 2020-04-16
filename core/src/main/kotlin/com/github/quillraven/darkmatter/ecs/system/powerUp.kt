@@ -80,21 +80,25 @@ class PowerUpSystem(
                 return
             }
 
-            engine.entity {
-                with<TransformComponent> {
-                    position.set(2f * MathUtils.random(0, 4), 16f, 0f)
-                    LOG.debug { "Spawn power of type $powerUpType at $position" }
-                }
-                with<PowerUpComponent> {
-                    type = powerUpType
-                }
-                with<AnimationComponent> {
-                    type = powerUpType.animationType
-                }
-                with<GraphicComponent>()
-                with<MoveComponent> {
-                    speed.y = POWER_UP_SPEED
-                }
+            spawnPowerUp(powerUpType, 2f * MathUtils.random(0, 4), 16f)
+        }
+    }
+
+    fun spawnPowerUp(powerUpType: PowerUpType, x: Float, y: Float) {
+        engine.entity {
+            with<TransformComponent> {
+                position.set(x, y, 0f)
+                LOG.debug { "Spawn power of type $powerUpType at $position" }
+            }
+            with<PowerUpComponent> {
+                type = powerUpType
+            }
+            with<AnimationComponent> {
+                type = powerUpType.animationType
+            }
+            with<GraphicComponent>()
+            with<MoveComponent> {
+                speed.y = POWER_UP_SPEED
             }
         }
     }
@@ -147,6 +151,7 @@ class PowerUpSystem(
             powerUp.add(engine.createComponent(RemoveComponent::class.java))
 
             gameEventManager.dispatchEvent(GameEventType.POWER_UP, GameEventPowerUp.apply {
+                this.player = player
                 type = powerUpCmp.type
             })
         }

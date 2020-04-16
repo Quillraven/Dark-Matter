@@ -9,6 +9,7 @@ import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
 import com.github.quillraven.darkmatter.ecs.component.RemoveComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
 import com.github.quillraven.darkmatter.event.GameEventManager
+import com.github.quillraven.darkmatter.event.GameEventPlayerDamaged
 import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.ashley.allOf
 import ktx.ashley.entity
@@ -38,7 +39,10 @@ class DamageSystem(
                     }
 
                     player.life -= damage
-                    gameEventManager.dispatchEvent(GameEventType.PLAYER_DAMAGED)
+
+                    gameEventManager.dispatchEvent(GameEventType.PLAYER_DAMAGED, GameEventPlayerDamaged.apply {
+                        this.player = entity
+                    })
                     if (player.life <= 0f) {
                         entity.add(engine.createComponent(RemoveComponent::class.java).apply {
                             delay = 1f
