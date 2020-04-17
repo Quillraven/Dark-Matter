@@ -38,8 +38,10 @@ import ktx.app.KtxScreen
 import ktx.ashley.entity
 import ktx.assets.async.AssetStorage
 import ktx.log.logger
+import kotlin.math.min
 
 private val LOG = logger<GameScreen>()
+private const val MIN_DELTA_TIME = 1 / 30f
 
 class GameScreen(
     private val game: Game,
@@ -105,7 +107,8 @@ class GameScreen(
         if (respawn) {
             spawnPlayer()
         }
-        engine.update(delta)
+        val deltaTime = min(delta, MIN_DELTA_TIME)
+        engine.update(deltaTime)
     }
 
     override fun dispose() {
