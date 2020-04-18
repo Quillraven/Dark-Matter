@@ -87,7 +87,7 @@ class PowerUpSystem(
     fun spawnPowerUp(powerUpType: PowerUpType, x: Float, y: Float) {
         engine.entity {
             with<TransformComponent> {
-                position.set(x, y, 0f)
+                setInitialPosition(x, y, 0f)
                 LOG.debug { "Spawn power of type $powerUpType at $position" }
             }
             with<PowerUpComponent> {

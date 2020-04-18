@@ -40,7 +40,7 @@ import ktx.log.logger
 import kotlin.math.min
 
 private val LOG = logger<GameScreen>()
-private const val MIN_DELTA_TIME = 1 / 30f
+private const val MAX_DELTA_TIME = 1 / 30f
 
 class GameScreen(
     private val game: Game,
@@ -105,7 +105,7 @@ class GameScreen(
         if (respawn) {
             spawnPlayer()
         }
-        val deltaTime = min(delta, MIN_DELTA_TIME)
+        val deltaTime = min(delta, MAX_DELTA_TIME)
         engine.update(deltaTime)
     }
 
@@ -123,7 +123,7 @@ class GameScreen(
             with<FacingComponent>()
             with<MoveComponent>()
             with<TransformComponent> {
-                position.set(V_WIDTH * 0.5f - size.x * 0.5f, V_HEIGHT * 0.5f - size.y * 0.5f, 1f)
+                setInitialPosition(V_WIDTH * 0.5f - size.x * 0.5f, V_HEIGHT * 0.5f - size.y * 0.5f, 1f)
                 size.set(10f / 8f, 9f / 8f)
             }
             with<GraphicComponent>()

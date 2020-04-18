@@ -23,11 +23,42 @@ private const val HOR_ACCELERATION = 16.5f
 private const val MAX_VER_NEG_PLAYER_SPEED = 0.75f
 private const val MAX_VER_POS_PLAYER_SPEED = 5f
 private const val MAX_HOR_SPEED = 5.5f
+private const val UPDATE_RATE = 1 / 25f
 
 class MoveSystem :
     IteratingSystem(
         allOf(TransformComponent::class, MoveComponent::class).exclude(RemoveComponent::class).get()
     ) {
+    private var accumulator = 0f
+
+    override fun update(deltaTime: Float) {
+        accumulator += deltaTime
+        while (accumulator >= UPDATE_RATE) {
+            accumulator -= UPDATE_RATE
+
+            // store position before updating
+            entities.forEach { entity ->
+                entity[TransformComponent.mapper]?.let { transform ->
+                    transform.prevPosition.set(transform.position)
+                }
+            }
+
+            super.update(UPDATE_RATE)
+        }
+
+        val alpha = accumulator / UPDATE_RATE
+        // update interpolation position
+        entities.forEach { entity ->
+            entity[TransformComponent.mapper]?.let { transform ->
+                transform.interpolatedPosition.set(
+                    MathUtils.lerp(transform.prevPosition.x, transform.position.x, alpha),
+                    MathUtils.lerp(transform.prevPosition.y, transform.position.y, alpha),
+                    transform.position.z
+                )
+            }
+        }
+    }
+
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[MoveComponent.mapper]?.let { move ->
             entity[TransformComponent.mapper]?.let { transform ->

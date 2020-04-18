@@ -114,7 +114,7 @@ class RenderSystem(
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[TransformComponent.mapper]?.let { transform ->
-            val (posX, posY) = transform.position
+            val (posX, posY) = transform.interpolatedPosition
             val (sizeX, sizeY) = transform.size
             entity[GraphicComponent.mapper]?.let { graphic ->
                 if (graphic.sprite.texture == null) {

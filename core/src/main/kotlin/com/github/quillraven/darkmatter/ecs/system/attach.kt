@@ -27,12 +27,12 @@ class AttachSystem :
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[AttachComponent.mapper]?.let { attach ->
-            // update position
+            // update position for rendering
             entity[TransformComponent.mapper]?.let { transform ->
                 attach.entity[TransformComponent.mapper]?.let { attachTransform ->
-                    transform.position.set(
-                        attachTransform.position.x + attach.offset.x,
-                        attachTransform.position.y + attach.offset.y,
+                    transform.interpolatedPosition.set(
+                        attachTransform.interpolatedPosition.x + attach.offset.x,
+                        attachTransform.interpolatedPosition.y + attach.offset.y,
                         transform.position.z
                     )
                 }
