@@ -13,7 +13,6 @@ import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
 import ktx.log.logger
-import kotlin.system.measureTimeMillis
 
 private val LOG = logger<LoadingScreen>()
 
@@ -25,19 +24,18 @@ class LoadingScreen(
     override fun show() {
         LOG.debug { "Show" }
 
-        val timeToLoadAndInit = measureTimeMillis {
-            val assetRefs = listOf(
-                TextureAtlasAsset.values().map { assets.loadAsync(it.descriptor) },
-                TextureAsset.values().map { assets.loadAsync(it.descriptor) },
-                SoundAsset.values().map { assets.loadAsync(it.descriptor) },
-                ShaderProgramAsset.values().map { assets.loadAsync(it.descriptor) }
-            ).flatten()
-            KtxAsync.launch {
-                assetRefs.joinAll()
-                assetsLoaded()
-            }
+        val old = System.currentTimeMillis()
+        val assetRefs = listOf(
+            TextureAtlasAsset.values().map { assets.loadAsync(it.descriptor) },
+            TextureAsset.values().map { assets.loadAsync(it.descriptor) },
+            SoundAsset.values().map { assets.loadAsync(it.descriptor) },
+            ShaderProgramAsset.values().map { assets.loadAsync(it.descriptor) }
+        ).flatten()
+        KtxAsync.launch {
+            assetRefs.joinAll()
+            LOG.debug { "It took ${(System.currentTimeMillis() - old) * 0.001f} seconds to load assets and initialize" }
+            assetsLoaded()
         }
-        LOG.debug { "It took ${timeToLoadAndInit * 0.001f} seconds to load assets and initialize" }
     }
 
     private fun assetsLoaded() {
