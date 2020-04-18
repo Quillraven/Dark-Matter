@@ -2,6 +2,7 @@ package com.github.quillraven.darkmatter.audio
 
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.utils.Pool
+import com.github.quillraven.darkmatter.asset.MusicAsset
 import com.github.quillraven.darkmatter.asset.SoundAsset
 import ktx.assets.async.AssetStorage
 import ktx.log.logger
@@ -13,7 +14,8 @@ private const val MAX_SOUND_INSTANCES = 16
 
 interface AudioService {
     fun play(soundAsset: SoundAsset, volume: Float = 1f) = Unit
-    fun update()
+    fun play(musicAsset: MusicAsset, volume: Float = 1f, loop: Boolean = true) = Unit
+    fun update() = Unit
 }
 
 private class SoundRequest : Pool.Poolable {
@@ -69,10 +71,23 @@ class DefaultAudioService(private val assets: AssetStorage) : AudioService {
         }
     }
 
+    override fun play(musicAsset: MusicAsset, volume: Float, loop: Boolean) {
+        if (musicAsset.descriptor !in assets) {
+            LOG.error { "Music $musicAsset is not loaded" }
+            return
+        }
+
+        assets[musicAsset.descriptor].apply {
+            this.volume = volume
+            this.isLooping = loop
+            play()
+        }
+    }
+
     override fun update() {
         if (!soundRequests.isEmpty()) {
             // there are sounds to be played
-            LOG.debug { "Playing ${soundRequests.size} sounds" }
+            LOG.debug { "Playing ${soundRequests.size} sound(s)" }
             soundRequests.values.forEach { request ->
                 soundCache[request.soundAsset]?.play(request.volume)
                 soundRequestPool.free(request)
