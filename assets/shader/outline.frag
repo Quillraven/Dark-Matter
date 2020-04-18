@@ -3,7 +3,7 @@ varying vec2 v_texCoords;
 
 uniform sampler2D u_texture;
 uniform vec2 u_textureSize;
-uniform vec3 u_outlineColor;
+uniform vec4 u_outlineColor;
 
 void main()
 {
@@ -18,7 +18,7 @@ void main()
         || texture2D(u_texture, v_texCoords + vec2(0.0, -pixelSize.y)).a > 0.0
         ) {
             // border pixel
-            gl_FragColor = vec4(u_outlineColor.rgb, 1.0);
+            gl_FragColor = u_outlineColor;
             return;
         }
     }

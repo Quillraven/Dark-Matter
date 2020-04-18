@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.SortedIteratingSystem
 import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.Sprite
@@ -28,7 +29,7 @@ import ktx.log.logger
 import ktx.math.component1
 import ktx.math.component2
 import ktx.math.vec2
-import ktx.math.vec3
+import kotlin.math.max
 import kotlin.math.min
 
 private val LOG = logger<RenderSystem>()
@@ -52,7 +53,7 @@ class RenderSystem(
     private val backgroundScrollSpeed = vec2(0.03f, MIN_BGD_SCROLL_SPEED_Y)
     private val textureSizeLoc = outlineShader.getUniformLocation("u_textureSize")
     private val outlineColorLoc = outlineShader.getUniformLocation("u_outlineColor")
-    private val outlineColor = vec3(0f, 113f / 255f, 214f / 255f)
+    private val outlineColor = Color(0f, 113f / 255f, 214f / 255f, 1f)
     private val playerEntities by lazy {
         engine.getEntitiesFor(
             allOf(PlayerComponent::class).exclude(RemoveComponent::class).get()
@@ -90,10 +91,11 @@ class RenderSystem(
         // render player with outline shader in case he has a shield
         batch.use(camera.combined) {
             it.shader = outlineShader
-            outlineShader.setUniformf(outlineColorLoc, outlineColor)
             playerEntities.forEach { entity ->
                 entity[PlayerComponent.mapper]?.let { player ->
                     if (player.shield > 0f) {
+                        outlineColor.a = max(0.35f, player.shield / player.maxShield)
+                        outlineShader.setUniformf(outlineColorLoc, outlineColor)
                         entity[GraphicComponent.mapper]?.let { graphic ->
                             graphic.sprite.run {
                                 outlineShader.setUniformf(
