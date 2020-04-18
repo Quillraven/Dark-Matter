@@ -109,6 +109,7 @@ class GameScreen(
         }
         val deltaTime = min(delta, MAX_DELTA_TIME)
         engine.update(deltaTime)
+        audioService.update()
     }
 
     override fun dispose() {

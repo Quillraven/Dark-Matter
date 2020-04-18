@@ -63,7 +63,7 @@ class DebugSystem(
                     Gdx.input.isKeyPressed(Input.Keys.NUM_8) -> {
                         // play three random sounds
                         repeat(3) {
-                            audioService.play(SoundAsset.values()[MathUtils.random(0, SoundAsset.values().size - 1)])
+                            audioService.play(SoundAsset.values()[MathUtils.random(1, SoundAsset.values().size - 1)])
                         }
                     }
                 }
