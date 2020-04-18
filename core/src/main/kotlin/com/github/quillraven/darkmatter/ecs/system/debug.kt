@@ -4,6 +4,9 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IntervalIteratingSystem
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.math.MathUtils
+import com.github.quillraven.darkmatter.audio.AudioService
+import com.github.quillraven.darkmatter.audio.SoundAsset
 import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
 import com.github.quillraven.darkmatter.ecs.component.PowerUpType
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
@@ -16,7 +19,8 @@ import kotlin.math.max
 import kotlin.math.min
 
 class DebugSystem(
-    private val gameEventManager: GameEventManager
+    private val gameEventManager: GameEventManager,
+    private val audioService: AudioService
 ) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 0.25f) {
     override fun processEntity(entity: Entity) {
         entity[PlayerComponent.mapper]?.let { player ->
@@ -55,6 +59,12 @@ class DebugSystem(
                         // trigger player heal event
                         engine.getSystem(PowerUpSystem::class.java)
                             .spawnPowerUp(PowerUpType.LIFE, transform.position.x, transform.position.y)
+                    }
+                    Gdx.input.isKeyPressed(Input.Keys.NUM_8) -> {
+                        // play three random sounds
+                        repeat(3) {
+                            audioService.play(SoundAsset.values()[MathUtils.random(0, SoundAsset.values().size - 1)])
+                        }
                     }
                 }
 

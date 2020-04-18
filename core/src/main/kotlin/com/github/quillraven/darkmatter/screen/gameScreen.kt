@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.quillraven.darkmatter.Game
 import com.github.quillraven.darkmatter.V_HEIGHT
 import com.github.quillraven.darkmatter.V_WIDTH
+import com.github.quillraven.darkmatter.audio.AudioService
 import com.github.quillraven.darkmatter.ecs.component.AnimationComponent
 import com.github.quillraven.darkmatter.ecs.component.AnimationType
 import com.github.quillraven.darkmatter.ecs.component.AttachComponent
@@ -48,13 +49,14 @@ class GameScreen(
     private val assets: AssetStorage = game.assets,
     private val gameEventManager: GameEventManager = game.gameEventManager,
     private val stage: Stage = game.stage,
-    private val outlineShader: ShaderProgram = game.assets["outlineShader"]
+    private val outlineShader: ShaderProgram = game.assets["outlineShader"],
+    private val audioService: AudioService = game.audioService
 ) : KtxScreen, GameEventListener {
     private val viewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
     private val engine = PooledEngine().apply {
         val atlas = assets.get<TextureAtlas>("graphics/graphics.atlas")
 
-        addSystem(DebugSystem(gameEventManager))
+        addSystem(DebugSystem(gameEventManager, audioService))
         addSystem(PowerUpSystem(gameEventManager))
         addSystem(PlayerInputSystem(viewport))
         addSystem(MoveSystem())
