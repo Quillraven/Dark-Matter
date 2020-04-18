@@ -5,6 +5,8 @@ import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.utils.Array
+import com.github.quillraven.darkmatter.asset.SoundAsset
+import com.github.quillraven.darkmatter.audio.AudioService
 import com.github.quillraven.darkmatter.ecs.component.AnimationComponent
 import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
 import com.github.quillraven.darkmatter.ecs.component.MoveComponent
@@ -39,7 +41,8 @@ private class SpawnPattern(
 )
 
 class PowerUpSystem(
-    private val gameEventManager: GameEventManager
+    private val gameEventManager: GameEventManager,
+    private val audioService: AudioService
 ) : IteratingSystem(allOf(PowerUpComponent::class, TransformComponent::class).exclude(RemoveComponent::class).get()) {
     private val playerBoundingRect = Rectangle()
     private val powerUpBoundingRect = Rectangle()
@@ -138,13 +141,21 @@ class PowerUpSystem(
             LOG.debug { "Picking up power of type ${powerUpCmp.type}" }
 
             when (powerUpCmp.type) {
-                PowerUpType.SPEED_1 -> player[MoveComponent.mapper]?.let { it.speed.y += 3f }
-                PowerUpType.SPEED_2 -> player[MoveComponent.mapper]?.let { it.speed.y += 3.75f }
+                PowerUpType.SPEED_1 -> {
+                    player[MoveComponent.mapper]?.let { it.speed.y += 3f }
+                    audioService.play(SoundAsset.BOOST_1)
+                }
+                PowerUpType.SPEED_2 -> {
+                    player[MoveComponent.mapper]?.let { it.speed.y += 3.75f }
+                    audioService.play(SoundAsset.BOOST_2)
+                }
                 PowerUpType.LIFE -> player[PlayerComponent.mapper]?.let {
                     it.life = min(it.maxLife, it.life + 25f)
+                    audioService.play(SoundAsset.LIFE)
                 }
                 PowerUpType.SHIELD -> player[PlayerComponent.mapper]?.let {
                     it.shield = min(it.maxShield, it.shield + 25f)
+                    audioService.play(SoundAsset.SHIELD)
                 }
                 else -> LOG.error { "Unsupported power of type ${powerUpCmp.type}" }
             }
@@ -154,6 +165,13 @@ class PowerUpSystem(
                 this.player = player
                 type = powerUpCmp.type
             })
+        }
+    }
+
+    fun reset() {
+        spawnTime = 0f
+        entities.forEach {
+            it.add(engine.createComponent(RemoveComponent::class.java))
         }
     }
 }
