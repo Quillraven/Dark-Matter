@@ -40,6 +40,8 @@ class LoadingScreen(
 
     private fun assetsLoaded() {
         game.addScreen(GameScreen(game))
+        game.addScreen(GameOverScreen(game))
+        game.addScreen(MenuScreen(game))
     }
 
     override fun resize(width: Int, height: Int) {
@@ -50,7 +52,7 @@ class LoadingScreen(
         if (assets.progress.isFinished && Gdx.input.justTouched()) {
             game.removeScreen(LoadingScreen::class.java)
             dispose()
-            game.setScreen<GameScreen>()
+            game.setScreen<MenuScreen>()
         }
     }
 
