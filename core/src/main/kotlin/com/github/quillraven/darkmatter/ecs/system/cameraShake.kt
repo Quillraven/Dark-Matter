@@ -59,7 +59,7 @@ private class CameraShake : Pool.Poolable {
     }
 }
 
-private class CameraShakePool(private val camera: Camera) : Pool<CameraShake>(2, 4, false) {
+private class CameraShakePool(private val camera: Camera) : Pool<CameraShake>() {
     override fun newObject(): CameraShake {
         return CameraShake().apply {
             this.camera = this@CameraShakePool.camera
