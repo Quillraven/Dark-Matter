@@ -22,14 +22,13 @@ import com.github.quillraven.darkmatter.ecs.system.AttachSystem
 import com.github.quillraven.darkmatter.ecs.system.CameraShakeSystem
 import com.github.quillraven.darkmatter.ecs.system.DamageSystem
 import com.github.quillraven.darkmatter.ecs.system.DebugSystem
-import com.github.quillraven.darkmatter.ecs.system.HorizontalMoveSystem
+import com.github.quillraven.darkmatter.ecs.system.MoveSystem
 import com.github.quillraven.darkmatter.ecs.system.PlayerAnimationSystem
 import com.github.quillraven.darkmatter.ecs.system.PlayerColorSystem
 import com.github.quillraven.darkmatter.ecs.system.PlayerInputSystem
 import com.github.quillraven.darkmatter.ecs.system.PowerUpSystem
 import com.github.quillraven.darkmatter.ecs.system.RemoveSystem
 import com.github.quillraven.darkmatter.ecs.system.RenderSystem
-import com.github.quillraven.darkmatter.ecs.system.VerticalMoveSystem
 import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventListener
 import com.github.quillraven.darkmatter.event.GameEventManager
@@ -58,8 +57,7 @@ class GameScreen(
         addSystem(DebugSystem(gameEventManager))
         addSystem(PowerUpSystem(gameEventManager))
         addSystem(PlayerInputSystem(viewport))
-        addSystem(HorizontalMoveSystem())
-        addSystem(VerticalMoveSystem())
+        addSystem(MoveSystem())
         addSystem(DamageSystem(gameEventManager))
         addSystem(
             PlayerAnimationSystem(

@@ -36,12 +36,12 @@ class DebugSystem(
                         player.shield = 0f
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_4) -> {
-                        // disable vertical movement
-                        engine.getSystem(VerticalMoveSystem::class.java).setProcessing(false)
+                        // disable movement
+                        engine.getSystem(MoveSystem::class.java).setProcessing(false)
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_5) -> {
-                        // enable vertical movement
-                        engine.getSystem(VerticalMoveSystem::class.java).setProcessing(true)
+                        // enable movement
+                        engine.getSystem(MoveSystem::class.java).setProcessing(true)
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_6) -> {
                         // trigger player damage event
