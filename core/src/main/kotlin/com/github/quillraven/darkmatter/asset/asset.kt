@@ -2,6 +2,7 @@ package com.github.quillraven.darkmatter.asset
 
 import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.loaders.ShaderProgramLoader
+import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
@@ -16,7 +17,18 @@ enum class SoundAsset(
     BOOST_2("boost2.wav"),
     EXPLOSION("explosion.wav"),
     LIFE("life.wav"),
-    SHIELD("shield.wav")
+    SHIELD("shield.wav"),
+    DAMAGE("damage.wav"),
+    BLOCK("block.wav"),
+    SPAWN("spawn.wav")
+}
+
+enum class MusicAsset(
+    fileName: String,
+    directory: String = "music",
+    val descriptor: AssetDescriptor<Music> = AssetDescriptor("$directory/$fileName", Music::class.java)
+) {
+    GAME("game.mp3")
 }
 
 enum class TextureAtlasAsset(
