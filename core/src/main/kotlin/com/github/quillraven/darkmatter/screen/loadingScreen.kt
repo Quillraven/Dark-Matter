@@ -1,12 +1,12 @@
 package com.github.quillraven.darkmatter.screen
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.assets.loaders.ShaderProgramLoader
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.github.quillraven.darkmatter.Game
+import com.github.quillraven.darkmatter.asset.ShaderProgramAsset
+import com.github.quillraven.darkmatter.asset.SoundAsset
+import com.github.quillraven.darkmatter.asset.TextureAsset
+import com.github.quillraven.darkmatter.asset.TextureAtlasAsset
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import ktx.app.KtxScreen
@@ -27,16 +27,11 @@ class LoadingScreen(
 
         val timeToLoadAndInit = measureTimeMillis {
             val assetRefs = listOf(
-                assets.loadAsync<TextureAtlas>("graphics/graphics.atlas"),
-                assets.loadAsync<Texture>("graphics/background.png"),
-                assets.loadAsync<ShaderProgram>(
-                    "outlineShader",
-                    parameters = ShaderProgramLoader.ShaderProgramParameter().apply {
-                        vertexFile = "shader/default.vert"
-                        fragmentFile = "shader/outline.frag"
-                        logOnCompileFailure
-                    })
-            )
+                TextureAtlasAsset.values().map { assets.loadAsync(it.descriptor) },
+                TextureAsset.values().map { assets.loadAsync(it.descriptor) },
+                SoundAsset.values().map { assets.loadAsync(it.descriptor) },
+                ShaderProgramAsset.values().map { assets.loadAsync(it.descriptor) }
+            ).flatten()
             KtxAsync.launch {
                 assetRefs.joinAll()
                 assetsLoaded()

@@ -2,13 +2,15 @@ package com.github.quillraven.darkmatter.screen
 
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.quillraven.darkmatter.Game
 import com.github.quillraven.darkmatter.V_HEIGHT
 import com.github.quillraven.darkmatter.V_WIDTH
+import com.github.quillraven.darkmatter.asset.ShaderProgramAsset
+import com.github.quillraven.darkmatter.asset.TextureAsset
+import com.github.quillraven.darkmatter.asset.TextureAtlasAsset
 import com.github.quillraven.darkmatter.audio.AudioService
 import com.github.quillraven.darkmatter.ecs.component.AnimationComponent
 import com.github.quillraven.darkmatter.ecs.component.AnimationType
@@ -49,12 +51,12 @@ class GameScreen(
     private val assets: AssetStorage = game.assets,
     private val gameEventManager: GameEventManager = game.gameEventManager,
     private val stage: Stage = game.stage,
-    private val outlineShader: ShaderProgram = game.assets["outlineShader"],
+    private val outlineShader: ShaderProgram = game.assets[ShaderProgramAsset.OUTLINE.descriptor],
     private val audioService: AudioService = game.audioService
 ) : KtxScreen, GameEventListener {
     private val viewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
     private val engine = PooledEngine().apply {
-        val atlas = assets.get<TextureAtlas>("graphics/graphics.atlas")
+        val atlas = assets[TextureAtlasAsset.GRAPHICS.descriptor]
 
         addSystem(DebugSystem(gameEventManager, audioService))
         addSystem(PowerUpSystem(gameEventManager))
@@ -79,7 +81,7 @@ class GameScreen(
                 outlineShader,
                 viewport,
                 gameEventManager,
-                assets["graphics/background.png"]
+                assets[TextureAsset.BACKGROUND.descriptor]
             )
         )
         addSystem(RemoveSystem(gameEventManager))

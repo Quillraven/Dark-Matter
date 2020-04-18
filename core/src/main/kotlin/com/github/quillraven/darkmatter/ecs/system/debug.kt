@@ -5,8 +5,8 @@ import com.badlogic.ashley.systems.IntervalIteratingSystem
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.math.MathUtils
+import com.github.quillraven.darkmatter.asset.SoundAsset
 import com.github.quillraven.darkmatter.audio.AudioService
-import com.github.quillraven.darkmatter.audio.SoundAsset
 import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
 import com.github.quillraven.darkmatter.ecs.component.PowerUpType
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
@@ -63,7 +63,7 @@ class DebugSystem(
                     Gdx.input.isKeyPressed(Input.Keys.NUM_8) -> {
                         // play three random sounds
                         repeat(3) {
-                            audioService.play(SoundAsset.values()[MathUtils.random(1, SoundAsset.values().size - 1)])
+                            audioService.play(SoundAsset.values()[MathUtils.random(0, SoundAsset.values().size - 1)])
                         }
                     }
                 }
