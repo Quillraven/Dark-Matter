@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.profiling.GLProfiler
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
+import com.github.quillraven.darkmatter.asset.MusicAsset
+import com.github.quillraven.darkmatter.audio.DefaultAudioService
 import com.github.quillraven.darkmatter.event.GameEventManager
 import com.github.quillraven.darkmatter.screen.LoadingScreen
 import ktx.app.KtxGame
@@ -32,6 +34,7 @@ class Game : KtxGame<KtxScreen>() {
         AssetStorage()
     }
     val gameEventManager by lazy { GameEventManager() }
+    val audioService by lazy { DefaultAudioService(assets) }
     private val profiler by lazy { GLProfiler(Gdx.graphics) }
 
     override fun create() {
@@ -51,6 +54,10 @@ class Game : KtxGame<KtxScreen>() {
         LOG.debug { "Dispose game with ${this.screens.size} screen(s)" }
         LOG.debug { "Last number of draw calls: ${profiler.drawCalls}" }
         LOG.debug { "Last number of texture bindings: ${profiler.textureBindings}" }
+        MusicAsset.values().forEach {
+            LOG.debug { "Reference count for music $it is ${assets.getReferenceCount(it.descriptor)}" }
+        }
+
         super.dispose()
         batch.dispose()
         assets.dispose()
