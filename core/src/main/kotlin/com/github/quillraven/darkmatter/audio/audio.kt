@@ -1,5 +1,6 @@
 package com.github.quillraven.darkmatter.audio
 
+import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.utils.Pool
 import com.github.quillraven.darkmatter.asset.MusicAsset
@@ -35,6 +36,7 @@ class DefaultAudioService(private val assets: AssetStorage) : AudioService {
     private val soundCache = EnumMap<SoundAsset, Sound>(SoundAsset::class.java)
     private val soundRequestPool = SoundRequestPool()
     private val soundRequests = EnumMap<SoundAsset, SoundRequest>(SoundAsset::class.java)
+    private var currentMusic: Music? = null
 
     override fun play(soundAsset: SoundAsset, volume: Float) {
         when {
@@ -72,12 +74,16 @@ class DefaultAudioService(private val assets: AssetStorage) : AudioService {
     }
 
     override fun play(musicAsset: MusicAsset, volume: Float, loop: Boolean) {
+        if (currentMusic != null) {
+            currentMusic?.stop()
+        }
+
         if (musicAsset.descriptor !in assets) {
             LOG.error { "Music $musicAsset is not loaded" }
             return
         }
 
-        assets[musicAsset.descriptor].apply {
+        currentMusic = assets[musicAsset.descriptor].apply {
             this.volume = volume
             this.isLooping = loop
             play()
