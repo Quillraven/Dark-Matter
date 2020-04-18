@@ -28,7 +28,9 @@ enum class MusicAsset(
     directory: String = "music",
     val descriptor: AssetDescriptor<Music> = AssetDescriptor("$directory/$fileName", Music::class.java)
 ) {
-    GAME("game.mp3")
+    GAME("game.mp3"),
+    GAME_OVER("gameOver.mp3"),
+    MENU("menu.mp3")
 }
 
 enum class TextureAtlasAsset(
