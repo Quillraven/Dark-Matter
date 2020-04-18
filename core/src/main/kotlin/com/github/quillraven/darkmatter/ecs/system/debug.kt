@@ -13,6 +13,7 @@ import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.ashley.allOf
 import ktx.ashley.get
 import kotlin.math.max
+import kotlin.math.min
 
 class DebugSystem(
     private val gameEventManager: GameEventManager
@@ -28,12 +29,12 @@ class DebugSystem(
                         player.shield = 0f
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_2) -> {
-                        // set shield
-                        player.shield = 100f
+                        // add shield
+                        player.shield = min(player.maxShield, player.shield + 25f)
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_3) -> {
                         // remove shield
-                        player.shield = 0f
+                        player.shield = max(0f, player.shield - 25f)
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_4) -> {
                         // disable movement
