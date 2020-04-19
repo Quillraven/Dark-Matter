@@ -229,7 +229,10 @@ class GameScreen(
                 }
             }
             GameEventType.PLAYER_HIT -> {
-                ui.updateLife((data as GameEventPlayerHit).life, data.maxLife)
+                ui.run {
+                    updateLife((data as GameEventPlayerHit).life, data.maxLife)
+                    showWarning()
+                }
             }
             GameEventType.POWER_UP -> {
                 val eventData = data as GameEventPowerUp

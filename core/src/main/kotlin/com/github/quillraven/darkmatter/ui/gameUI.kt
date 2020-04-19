@@ -2,8 +2,10 @@ package com.github.quillraven.darkmatter.ui
 
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.Group
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.utils.Align
 import com.github.quillraven.darkmatter.V_WIDTH_PIXELS
+import ktx.actors.plus
 import ktx.actors.plusAssign
 import ktx.scene2d.image
 import ktx.scene2d.label
@@ -18,9 +20,14 @@ private const val GAME_HUD_AREA_HEIGHT = 9f
 private const val MIN_SPEED = -99f
 private const val MAX_SPEED = 999f
 private const val MAX_DISTANCE = 999999f
+private const val WARNING_FADE_IN_TIME = 0.5f
+private const val WARNING_FADE_OUT_TIME = 1f
+private const val MAX_WARNING_FLASHES = 3
 
 class GameUI : Group() {
-    private val warningImage = scene2d.image(UIImage.WARNING.atlasKey)
+    private val warningImage = scene2d.image(UIImage.WARNING.atlasKey) {
+        color.a = 0f
+    }
     private val lifeBarImage = scene2d.image(UIImage.LIFE_BAR.atlasKey) {
         width = GAME_HUD_SMALL_AREA_WIDTH
         height = GAME_HUD_AREA_HEIGHT
@@ -88,7 +95,7 @@ class GameUI : Group() {
     fun updateSpeed(speed: Float) {
         speedLabel.run {
             text.setLength(0)
-            text.append(MathUtils.clamp(speed, -MIN_SPEED, MAX_SPEED).roundToInt())
+            text.append(MathUtils.clamp(speed, MIN_SPEED, MAX_SPEED).roundToInt())
             invalidateHierarchy()
         }
     }
@@ -99,5 +106,13 @@ class GameUI : Group() {
 
     fun updateShield(shield: Float, maxShield: Float) {
         shieldBarImage.color.a = MathUtils.clamp(shield / maxShield, 0f, 1f)
+    }
+
+    fun showWarning() {
+        if (warningImage.actions.size <= MAX_WARNING_FLASHES) {
+            warningImage += Actions.sequence(
+                Actions.fadeIn(WARNING_FADE_IN_TIME) + Actions.fadeOut(WARNING_FADE_OUT_TIME)
+            )
+        }
     }
 }
