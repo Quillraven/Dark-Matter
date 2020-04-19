@@ -38,7 +38,9 @@ import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventListener
 import com.github.quillraven.darkmatter.event.GameEventManager
 import com.github.quillraven.darkmatter.event.GameEventType
+import com.github.quillraven.darkmatter.ui.GameUI
 import kotlinx.coroutines.launch
+import ktx.actors.plusAssign
 import ktx.app.KtxScreen
 import ktx.ashley.entity
 import ktx.assets.async.AssetStorage
@@ -109,6 +111,10 @@ class GameScreen(
             LOG.debug { "It took ${(System.currentTimeMillis() - old) * 0.001f} seconds to load the game music" }
             audioService.play(MusicAsset.GAME)
         }
+
+        // update stage
+        stage.clear()
+        stage += GameUI()
     }
 
     override fun hide() {
