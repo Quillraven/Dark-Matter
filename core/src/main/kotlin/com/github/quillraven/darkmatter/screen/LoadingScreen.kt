@@ -26,7 +26,7 @@ class LoadingScreen(
 
         val old = System.currentTimeMillis()
         val assetRefs = listOf(
-            TextureAtlasAsset.values().map { assets.loadAsync(it.descriptor) },
+            TextureAtlasAsset.values().filter { !it.isSkinAtlas }.map { assets.loadAsync(it.descriptor) },
             TextureAsset.values().map { assets.loadAsync(it.descriptor) },
             SoundAsset.values().map { assets.loadAsync(it.descriptor) },
             ShaderProgramAsset.values().map { assets.loadAsync(it.descriptor) }
@@ -53,6 +53,12 @@ class LoadingScreen(
             game.removeScreen(LoadingScreen::class.java)
             dispose()
             game.setScreen<MenuScreen>()
+        }
+
+        stage.run {
+            viewport.apply()
+            act()
+            draw()
         }
     }
 
