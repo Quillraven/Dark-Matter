@@ -11,7 +11,8 @@ import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
 import com.github.quillraven.darkmatter.ecs.component.RemoveComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
 import com.github.quillraven.darkmatter.event.GameEventManager
-import com.github.quillraven.darkmatter.event.GameEventPlayerDamaged
+import com.github.quillraven.darkmatter.event.GameEventPlayerBlock
+import com.github.quillraven.darkmatter.event.GameEventPlayerHit
 import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.ashley.allOf
 import ktx.ashley.entity
@@ -71,6 +72,11 @@ class DamageSystem(
                 blocked = true
                 player.shield = max(player.shield - damage, 0f)
                 damage -= blockAmount
+                gameEventManager.dispatchEvent(GameEventType.PLAYER_BLOCK, GameEventPlayerBlock.apply {
+                    shield = player.shield
+                    maxShield = player.maxShield
+                })
+
                 if (damage <= 0f) {
                     // entire damage was blocked
                     return
@@ -80,8 +86,10 @@ class DamageSystem(
             damageTaken = true
             player.life -= damage
 
-            gameEventManager.dispatchEvent(GameEventType.PLAYER_DAMAGED, GameEventPlayerDamaged.apply {
+            gameEventManager.dispatchEvent(GameEventType.PLAYER_HIT, GameEventPlayerHit.apply {
                 this.player = entity
+                life = player.life
+                maxLife = player.maxLife
             })
             if (player.life <= 0f) {
                 entity.add(engine.createComponent(RemoveComponent::class.java).apply {

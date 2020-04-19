@@ -18,8 +18,11 @@ import com.github.quillraven.darkmatter.ecs.component.AnimationType
 import com.github.quillraven.darkmatter.ecs.component.AttachComponent
 import com.github.quillraven.darkmatter.ecs.component.FacingComponent
 import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
+import com.github.quillraven.darkmatter.ecs.component.MAX_LIFE
+import com.github.quillraven.darkmatter.ecs.component.MAX_SHIELD
 import com.github.quillraven.darkmatter.ecs.component.MoveComponent
 import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
+import com.github.quillraven.darkmatter.ecs.component.PowerUpType
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
 import com.github.quillraven.darkmatter.ecs.system.AnimationSystem
 import com.github.quillraven.darkmatter.ecs.system.AttachSystem
@@ -37,12 +40,17 @@ import com.github.quillraven.darkmatter.ecs.system.RenderSystem
 import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventListener
 import com.github.quillraven.darkmatter.event.GameEventManager
+import com.github.quillraven.darkmatter.event.GameEventPlayerBlock
+import com.github.quillraven.darkmatter.event.GameEventPlayerHit
+import com.github.quillraven.darkmatter.event.GameEventPlayerMove
+import com.github.quillraven.darkmatter.event.GameEventPowerUp
 import com.github.quillraven.darkmatter.event.GameEventType
 import com.github.quillraven.darkmatter.ui.GameUI
 import kotlinx.coroutines.launch
 import ktx.actors.plusAssign
 import ktx.app.KtxScreen
 import ktx.ashley.entity
+import ktx.ashley.get
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
 import ktx.log.logger
@@ -64,6 +72,7 @@ class GameScreen(
 ) : KtxScreen, GameEventListener {
     private val viewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
     private val playerGraphicSize = vec2()
+    private val ui = GameUI()
     private val engine = PooledEngine().apply {
         val atlas = assets[TextureAtlasAsset.GRAPHICS.descriptor]
         val playerGraphicRegion = atlas.findRegion("ship_base")
@@ -72,7 +81,7 @@ class GameScreen(
         addSystem(DebugSystem(gameEventManager, audioService))
         addSystem(PowerUpSystem(gameEventManager, audioService))
         addSystem(PlayerInputSystem(viewport))
-        addSystem(MoveSystem())
+        addSystem(MoveSystem(gameEventManager))
         addSystem(DamageSystem(gameEventManager, audioService))
         addSystem(
             PlayerAnimationSystem(
@@ -96,12 +105,18 @@ class GameScreen(
         )
         addSystem(RemoveSystem(gameEventManager))
     }
-    private var respawn = true
 
     override fun show() {
         LOG.debug { "Show" }
-        gameEventManager.addListener(GameEventType.PLAYER_SPAWN, this)
-        gameEventManager.addListener(GameEventType.PLAYER_DEATH, this)
+        gameEventManager.run {
+            addListener(GameEventType.PLAYER_SPAWN, this@GameScreen)
+            addListener(GameEventType.PLAYER_DEATH, this@GameScreen)
+            addListener(GameEventType.PLAYER_MOVE, this@GameScreen)
+            addListener(GameEventType.PLAYER_HIT, this@GameScreen)
+            addListener(GameEventType.POWER_UP, this@GameScreen)
+            addListener(GameEventType.PLAYER_BLOCK, this@GameScreen)
+        }
+        spawnPlayer()
         spawnDarkMatter()
 
         val old = System.currentTimeMillis()
@@ -114,7 +129,7 @@ class GameScreen(
 
         // update stage
         stage.clear()
-        stage += GameUI()
+        stage += ui
     }
 
     override fun hide() {
@@ -132,9 +147,6 @@ class GameScreen(
     }
 
     override fun render(delta: Float) {
-        if (respawn) {
-            spawnPlayer()
-        }
         val deltaTime = min(delta, MAX_DELTA_TIME)
         engine.update(deltaTime)
         audioService.update()
@@ -146,8 +158,6 @@ class GameScreen(
     }
 
     private fun spawnPlayer() {
-        respawn = false
-
         // ship
         val ship = engine.entity {
             with<PlayerComponent>()
@@ -180,6 +190,14 @@ class GameScreen(
 
         audioService.play(SoundAsset.SPAWN)
         gameEventManager.dispatchEvent(GameEventType.PLAYER_SPAWN)
+
+        // reset UI to initial values
+        ui.run {
+            updateDistance(0f)
+            updateSpeed(PLAYER_START_SPEED)
+            updateLife(MAX_LIFE, MAX_LIFE)
+            updateShield(0f, MAX_SHIELD)
+        }
     }
 
     private fun spawnDarkMatter() {
@@ -196,14 +214,37 @@ class GameScreen(
 
     override fun onEvent(type: GameEventType, data: GameEvent?) {
         when (type) {
-            GameEventType.PLAYER_SPAWN -> LOG.debug { "Spawn new player" }
+            GameEventType.PLAYER_SPAWN -> {
+                LOG.debug { "Spawn new player" }
+                ui.updateDistance(0f)
+            }
             GameEventType.PLAYER_DEATH -> {
                 LOG.debug { "Player died with a distance of $data" }
                 game.setScreen<GameOverScreen>()
-                respawn = true
             }
-            else -> {
-                // ignore
+            GameEventType.PLAYER_MOVE -> {
+                ui.run {
+                    updateDistance((data as GameEventPlayerMove).distance)
+                    updateSpeed(data.speed)
+                }
+            }
+            GameEventType.PLAYER_HIT -> {
+                ui.updateLife((data as GameEventPlayerHit).life, data.maxLife)
+            }
+            GameEventType.POWER_UP -> {
+                val eventData = data as GameEventPowerUp
+                data.player[PlayerComponent.mapper]?.let { player ->
+                    when (eventData.type) {
+                        PowerUpType.LIFE -> ui.updateLife(player.life, player.maxLife)
+                        PowerUpType.SHIELD -> ui.updateShield(player.shield, player.maxShield)
+                        else -> {
+                            // ignore
+                        }
+                    }
+                }
+            }
+            GameEventType.PLAYER_BLOCK -> {
+                ui.updateShield((data as GameEventPlayerBlock).shield, data.maxShield)
             }
         }
     }

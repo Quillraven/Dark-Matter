@@ -12,35 +12,47 @@ private const val INITIAL_LISTENER_CAPACITY = 8
 enum class GameEventType {
     PLAYER_SPAWN,
     PLAYER_DEATH,
-    PLAYER_DAMAGED,
+    PLAYER_BLOCK,
+    PLAYER_HIT,
+    PLAYER_MOVE,
     POWER_UP
 }
 
 interface GameEvent
 
-object GameEventPlayerDamaged : GameEvent {
-    lateinit var player: Entity
+object GameEventPlayerMove : GameEvent {
+    var distance = 0f
+    var speed = 0f
 
-    override fun toString(): String {
-        return "GameEventPlayerDamaged(player=$player)"
-    }
+    override fun toString() = "GameEventPlayerMove(distance=$distance, speed=$speed)"
+}
+
+object GameEventPlayerBlock : GameEvent {
+    var shield = 0f
+    var maxShield = 0f
+
+    override fun toString() = "GameEventPlayerBlock(shield=$shield, maxShield=$maxShield)"
+}
+
+object GameEventPlayerHit : GameEvent {
+    lateinit var player: Entity
+    var life = 0f
+    var maxLife = 0f
+
+    override fun toString() = "GameEventPlayerHit(player=$player)"
 }
 
 object GameEventPlayerDeath : GameEvent {
     var distance = 0f
 
-    override fun toString(): String {
-        return "GameEventPlayerDeath(distance=$distance)"
-    }
+    override fun toString() = "GameEventPlayerDeath(distance=$distance)"
 }
 
 object GameEventPowerUp : GameEvent {
     lateinit var player: Entity
     var type = PowerUpType.NONE
 
-    override fun toString(): String {
-        return "GameEventPowerUp(player=$player, type=$type)"
-    }
+    override fun toString() = "GameEventPowerUp(player=$player, type=$type)"
 }
 
 interface GameEventListener {

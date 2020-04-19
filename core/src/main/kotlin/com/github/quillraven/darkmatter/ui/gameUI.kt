@@ -1,5 +1,6 @@
 package com.github.quillraven.darkmatter.ui
 
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.utils.Align
 import com.github.quillraven.darkmatter.V_WIDTH_PIXELS
@@ -7,12 +8,16 @@ import ktx.actors.plusAssign
 import ktx.scene2d.image
 import ktx.scene2d.label
 import ktx.scene2d.scene2d
+import kotlin.math.roundToInt
 
 private const val GAME_HUD_BORDER_SIZE_X = 7f
 private const val GAME_HUD_BORDER_SIZE_Y = 6f
 private const val GAME_HUD_SMALL_AREA_WIDTH = 23f
 private const val GAME_HUD_LARGE_AREA_WIDTH = 48f
 private const val GAME_HUD_AREA_HEIGHT = 9f
+private const val MIN_SPEED = -99f
+private const val MAX_SPEED = 999f
+private const val MAX_DISTANCE = 999999f
 
 class GameUI : Group() {
     private val warningImage = scene2d.image(UIImage.WARNING.atlasKey)
@@ -24,11 +29,11 @@ class GameUI : Group() {
         width = GAME_HUD_SMALL_AREA_WIDTH
         height = GAME_HUD_AREA_HEIGHT
     }
-    private val distanceLabel = scene2d.label("1000", LabelStyle.DEFAULT.name) {
+    private val distanceLabel = scene2d.label("0", LabelStyle.DEFAULT.name) {
         width = GAME_HUD_LARGE_AREA_WIDTH
         setAlignment(Align.center)
     }
-    private val speedLabel = scene2d.label("375", LabelStyle.DEFAULT.name) {
+    private val speedLabel = scene2d.label("0", LabelStyle.DEFAULT.name) {
         width = GAME_HUD_SMALL_AREA_WIDTH
         setAlignment(Align.center)
     }
@@ -70,5 +75,29 @@ class GameUI : Group() {
                 GAME_HUD_BORDER_SIZE_Y
             )
         }
+    }
+
+    fun updateDistance(distance: Float) {
+        distanceLabel.run {
+            text.setLength(0)
+            text.append(MathUtils.clamp(distance, 0f, MAX_DISTANCE).roundToInt())
+            invalidateHierarchy()
+        }
+    }
+
+    fun updateSpeed(speed: Float) {
+        speedLabel.run {
+            text.setLength(0)
+            text.append(MathUtils.clamp(speed, -MIN_SPEED, MAX_SPEED).roundToInt())
+            invalidateHierarchy()
+        }
+    }
+
+    fun updateLife(life: Float, maxLife: Float) {
+        lifeBarImage.scaleX = MathUtils.clamp(life / maxLife, 0f, 1f)
+    }
+
+    fun updateShield(shield: Float, maxShield: Float) {
+        shieldBarImage.color.a = MathUtils.clamp(shield / maxShield, 0f, 1f)
     }
 }

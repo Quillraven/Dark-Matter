@@ -11,6 +11,9 @@ import com.github.quillraven.darkmatter.ecs.component.MoveComponent
 import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
 import com.github.quillraven.darkmatter.ecs.component.RemoveComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
+import com.github.quillraven.darkmatter.event.GameEventManager
+import com.github.quillraven.darkmatter.event.GameEventPlayerMove
+import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.ashley.allOf
 import ktx.ashley.exclude
 import ktx.ashley.get
@@ -25,10 +28,9 @@ private const val MAX_VER_POS_PLAYER_SPEED = 5f
 private const val MAX_HOR_SPEED = 5.5f
 private const val UPDATE_RATE = 1 / 25f
 
-class MoveSystem :
-    IteratingSystem(
-        allOf(TransformComponent::class, MoveComponent::class).exclude(RemoveComponent::class).get()
-    ) {
+class MoveSystem(
+    private val gameEventManager: GameEventManager
+) : IteratingSystem(allOf(TransformComponent::class, MoveComponent::class).exclude(RemoveComponent::class).get()) {
     private var accumulator = 0f
 
     override fun update(deltaTime: Float) {
@@ -101,6 +103,10 @@ class MoveSystem :
         val oldY = transform.position.y
         moveEntity(transform, move, deltaTime)
         player.distance += abs(transform.position.y - oldY)
+        gameEventManager.dispatchEvent(GameEventType.PLAYER_MOVE, GameEventPlayerMove.apply {
+            distance = player.distance
+            speed = move.speed.y
+        })
     }
 
     private fun moveEntity(
@@ -115,7 +121,7 @@ class MoveSystem :
         )
         transform.position.y = MathUtils.clamp(
             transform.position.y + move.speed.y * deltaTime,
-            0f,
+            1f,
             V_HEIGHT + 1f - transform.size.y
         )
     }

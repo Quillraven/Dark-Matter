@@ -115,7 +115,7 @@ class PowerUpSystem(
         val transform = entity[TransformComponent.mapper]
         require(transform != null) { "Entity |entity| must have a TransformComponent. entity=$entity" }
 
-        if (transform.position.y <= 0f) {
+        if (transform.position.y <= 1f) {
             entity.add(engine.createComponent(RemoveComponent::class.java))
             return
         }

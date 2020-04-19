@@ -78,12 +78,12 @@ class CameraShakeSystem(
 
     override fun addedToEngine(engine: Engine?) {
         super.addedToEngine(engine)
-        gameEventManager.addListener(GameEventType.PLAYER_DAMAGED, this)
+        gameEventManager.addListener(GameEventType.PLAYER_HIT, this)
     }
 
     override fun removedFromEngine(engine: Engine?) {
         super.removedFromEngine(engine)
-        gameEventManager.removeListener(GameEventType.PLAYER_DAMAGED, this)
+        gameEventManager.removeListener(GameEventType.PLAYER_HIT, this)
     }
 
     override fun update(deltaTime: Float) {

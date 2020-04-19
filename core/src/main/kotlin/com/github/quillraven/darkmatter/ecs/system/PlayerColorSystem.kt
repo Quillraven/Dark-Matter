@@ -11,7 +11,7 @@ import com.github.quillraven.darkmatter.ecs.component.RemoveComponent
 import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventListener
 import com.github.quillraven.darkmatter.event.GameEventManager
-import com.github.quillraven.darkmatter.event.GameEventPlayerDamaged
+import com.github.quillraven.darkmatter.event.GameEventPlayerHit
 import com.github.quillraven.darkmatter.event.GameEventPowerUp
 import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.ashley.allOf
@@ -31,7 +31,7 @@ class PlayerColorSystem(
 
     override fun addedToEngine(engine: Engine?) {
         super.addedToEngine(engine)
-        gameEventManager.addListener(GameEventType.PLAYER_DAMAGED, this)
+        gameEventManager.addListener(GameEventType.PLAYER_HIT, this)
         gameEventManager.addListener(GameEventType.POWER_UP, this)
     }
 
@@ -73,9 +73,9 @@ class PlayerColorSystem(
     }
 
     override fun onEvent(type: GameEventType, data: GameEvent?) {
-        if (type == GameEventType.PLAYER_DAMAGED) {
+        if (type == GameEventType.PLAYER_HIT) {
             // player gets damaged -> change to new color
-            setNewTargetColor((data as GameEventPlayerDamaged).player)
+            setNewTargetColor((data as GameEventPlayerHit).player)
         } else if (type == GameEventType.POWER_UP && (data as GameEventPowerUp).type == PowerUpType.LIFE) {
             // player gets healed -> change to new color
             setNewTargetColor(data.player)
