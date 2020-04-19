@@ -19,9 +19,12 @@ import ktx.ashley.exclude
 import ktx.ashley.get
 import kotlin.math.max
 
+const val DAMAGE_AREA_HEIGHT = 2f
 private const val DAMAGE_PER_SECOND = 25f
 private const val DAM_SOUND_LENGTH = 0.6f
 private const val BLOCK_SOUND_LENGTH = 0.6f
+private const val DEATH_EXPLOSION_SIZE = 1.5f
+private const val DEATH_EXPLOSION_DURATION = 0.9f
 
 class DamageSystem(
     private val gameEventManager: GameEventManager,
@@ -56,48 +59,49 @@ class DamageSystem(
     }
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        entity[TransformComponent.mapper]?.let { transform ->
-            entity[PlayerComponent.mapper]?.let { player ->
-                if (transform.position.y <= 2f) {
-                    var damage = DAMAGE_PER_SECOND * deltaTime
-                    if (player.shield > 0f) {
-                        val blockAmount = player.shield
-                        blocked = true
-                        player.shield = max(player.shield - damage, 0f)
-                        damage -= blockAmount
-                        if (damage <= 0f) {
-                            // entire damage was blocked
-                            return
-                        }
+        val transform = entity[TransformComponent.mapper]
+        require(transform != null) { "Entity |entity| must have a TransformComponent. entity=$entity" }
+        val player = entity[PlayerComponent.mapper]
+        require(player != null) { "Entity |entity| must have a PlayerComponent. entity=$entity" }
+
+        if (transform.position.y <= DAMAGE_AREA_HEIGHT) {
+            var damage = DAMAGE_PER_SECOND * deltaTime
+            if (player.shield > 0f) {
+                val blockAmount = player.shield
+                blocked = true
+                player.shield = max(player.shield - damage, 0f)
+                damage -= blockAmount
+                if (damage <= 0f) {
+                    // entire damage was blocked
+                    return
+                }
+            }
+
+            damageTaken = true
+            player.life -= damage
+
+            gameEventManager.dispatchEvent(GameEventType.PLAYER_DAMAGED, GameEventPlayerDamaged.apply {
+                this.player = entity
+            })
+            if (player.life <= 0f) {
+                entity.add(engine.createComponent(RemoveComponent::class.java).apply {
+                    delay = 1f
+                })
+                entity[GraphicComponent.mapper]?.sprite?.setAlpha(0f)
+                engine.entity {
+                    with<TransformComponent> {
+                        size.set(DEATH_EXPLOSION_SIZE, DEATH_EXPLOSION_SIZE)
+                        setInitialPosition(transform.position.x, transform.position.y, 2f)
                     }
-
-                    damageTaken = true
-                    player.life -= damage
-
-                    gameEventManager.dispatchEvent(GameEventType.PLAYER_DAMAGED, GameEventPlayerDamaged.apply {
-                        this.player = entity
-                    })
-                    if (player.life <= 0f) {
-                        entity.add(engine.createComponent(RemoveComponent::class.java).apply {
-                            delay = 1f
-                        })
-                        entity[GraphicComponent.mapper]?.sprite?.setAlpha(0f)
-                        engine.entity {
-                            with<TransformComponent> {
-                                size.set(1.5f, 1.5f)
-                                setInitialPosition(transform.position.x, transform.position.y, 2f)
-                            }
-                            with<AnimationComponent> {
-                                type = AnimationType.EXPLOSION
-                            }
-                            with<GraphicComponent>()
-                            with<RemoveComponent> {
-                                delay = 0.9f
-                            }
-                        }
-                        audioService.play(SoundAsset.EXPLOSION)
+                    with<AnimationComponent> {
+                        type = AnimationType.EXPLOSION
+                    }
+                    with<GraphicComponent>()
+                    with<RemoveComponent> {
+                        delay = DEATH_EXPLOSION_DURATION
                     }
                 }
+                audioService.play(SoundAsset.EXPLOSION)
             }
         }
     }

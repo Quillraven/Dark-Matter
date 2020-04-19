@@ -7,6 +7,8 @@ import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Pool
 import ktx.ashley.mapperFor
 
+private const val DEFAULT_FRAME_DURATION = 1 / 20f
+
 enum class AnimationType(
     val atlasKey: String,
     val playMode: Animation.PlayMode = Animation.PlayMode.LOOP,
@@ -19,7 +21,7 @@ enum class AnimationType(
     LIFE("life"),
     SHIELD("shield", speed = 0.75f),
     DARK_MATTER("dark_matter", speed = 3f),
-    EXPLOSION("explosion", Animation.PlayMode.NORMAL, 0.5f)
+    EXPLOSION("explosion", Animation.PlayMode.NORMAL, speed = 0.5f)
 }
 
 class Animation2D(
@@ -27,7 +29,7 @@ class Animation2D(
     keyFrames: Array<out TextureRegion>,
     playMode: PlayMode = PlayMode.LOOP,
     speed: Float = 1f
-) : Animation<TextureRegion>((1 / 20f) / speed, keyFrames, playMode)
+) : Animation<TextureRegion>((DEFAULT_FRAME_DURATION) / speed, keyFrames, playMode)
 
 class AnimationComponent : Component, Pool.Poolable {
     var type = AnimationType.NONE

@@ -18,10 +18,15 @@ import ktx.ashley.get
 import kotlin.math.max
 import kotlin.math.min
 
+private const val SHIELD_GAIN = 25f
+private const val PLAYER_DAMAGE = 5f
+private const val NUM_SOUNDS_TO_TEST = 3
+private const val WINDOW_INFO_UPDATE_INTERVAL = 0.25f
+
 class DebugSystem(
     private val gameEventManager: GameEventManager,
     private val audioService: AudioService
-) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 0.25f) {
+) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), WINDOW_INFO_UPDATE_INTERVAL) {
     override fun processEntity(entity: Entity) {
         entity[PlayerComponent.mapper]?.let { player ->
             entity[TransformComponent.mapper]?.let { transform ->
@@ -34,11 +39,11 @@ class DebugSystem(
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_2) -> {
                         // add shield
-                        player.shield = min(player.maxShield, player.shield + 25f)
+                        player.shield = min(player.maxShield, player.shield + SHIELD_GAIN)
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_3) -> {
                         // remove shield
-                        player.shield = max(0f, player.shield - 25f)
+                        player.shield = max(0f, player.shield - SHIELD_GAIN)
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_4) -> {
                         // disable movement
@@ -50,7 +55,7 @@ class DebugSystem(
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_6) -> {
                         // trigger player damage event
-                        player.life = max(1f, player.life - 5f)
+                        player.life = max(1f, player.life - PLAYER_DAMAGE)
                         gameEventManager.dispatchEvent(GameEventType.PLAYER_DAMAGED, GameEventPlayerDamaged.apply {
                             this.player = entity
                         })
@@ -62,13 +67,15 @@ class DebugSystem(
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_8) -> {
                         // play three random sounds
-                        repeat(3) {
+                        repeat(NUM_SOUNDS_TO_TEST) {
                             audioService.play(SoundAsset.values()[MathUtils.random(0, SoundAsset.values().size - 1)])
                         }
                     }
                 }
 
-                Gdx.graphics.setTitle("Dark Matter Debug - pos:${transform.position}, life:${player.life}, shield:${player.shield}")
+                Gdx.graphics.setTitle(
+                    "Dark Matter Debug - pos:${transform.position}, life:${player.life}, shield:${player.shield}"
+                )
             }
         }
     }

@@ -14,6 +14,8 @@ import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.math.vec3
 
 private const val MAX_SHAKE_INSTANCES = 4
+private const val SHAKE_DURATION = 0.25f
+private const val SHAKE_DISTORTION = 0.25f
 
 private class CameraShake : Pool.Poolable {
     var maxDistortion = 0f // in world units
@@ -99,8 +101,8 @@ class CameraShakeSystem(
     override fun onEvent(type: GameEventType, data: GameEvent?) {
         if (activeShakes.size < MAX_SHAKE_INSTANCES) {
             activeShakes.add(shakePool.obtain().apply {
-                duration = 0.25f
-                maxDistortion = 0.25f
+                duration = SHAKE_DURATION
+                maxDistortion = SHAKE_DISTORTION
             })
         }
     }

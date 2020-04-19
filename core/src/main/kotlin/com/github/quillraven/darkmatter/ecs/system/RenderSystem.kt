@@ -33,27 +33,35 @@ import kotlin.math.max
 import kotlin.math.min
 
 private val LOG = logger<RenderSystem>()
+private const val BGD_SCROLL_SPEED_X = 0.03f
 private const val MIN_BGD_SCROLL_SPEED_Y = -0.25f
+private const val OUTLINE_COLOR_RED = 0f
+private const val OUTLINE_COLOR_GREEN = 113f / 255f
+private const val OUTLINE_COLOR_BLUE = 214f / 255f
+private const val OUTLINE_COLOR_MIN_ALPHA = 0.35f
+private const val BGD_SCROLL_SPEED_GAIN_BOOST_1 = 0.25f
+private const val BGD_SCROLL_SPEED_GAIN_BOOST_2 = 0.5f
+private const val TIME_TO_RESET_BGD_SCROLL_SPEED = 10f // in seconds
 
 class RenderSystem(
     private val stage: Stage,
-    private val batch: Batch,
     private val outlineShader: ShaderProgram,
     private val gameViewport: Viewport,
     private val gameEventManager: GameEventManager,
-    backgroundTexture: Texture,
-    private val camera: Camera = gameViewport.camera
+    backgroundTexture: Texture
 ) : SortedIteratingSystem(
     allOf(GraphicComponent::class, TransformComponent::class).get(),
     compareBy { entity -> entity[TransformComponent.mapper] }
 ), GameEventListener {
+    private val batch: Batch = stage.batch
+    private val camera: Camera = gameViewport.camera
     private val background = Sprite(backgroundTexture.apply {
         setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
     })
-    private val backgroundScrollSpeed = vec2(0.03f, MIN_BGD_SCROLL_SPEED_Y)
+    private val backgroundScrollSpeed = vec2(BGD_SCROLL_SPEED_X, MIN_BGD_SCROLL_SPEED_Y)
     private val textureSizeLoc = outlineShader.getUniformLocation("u_textureSize")
     private val outlineColorLoc = outlineShader.getUniformLocation("u_outlineColor")
-    private val outlineColor = Color(0f, 113f / 255f, 214f / 255f, 1f)
+    private val outlineColor = Color(OUTLINE_COLOR_RED, OUTLINE_COLOR_GREEN, OUTLINE_COLOR_BLUE, 1f)
     private val playerEntities by lazy {
         engine.getEntitiesFor(
             allOf(PlayerComponent::class).exclude(RemoveComponent::class).get()
@@ -73,13 +81,7 @@ class RenderSystem(
     override fun update(deltaTime: Float) {
         // render scrolling background
         stage.viewport.apply()
-        batch.use(stage.camera.combined) {
-            background.run {
-                backgroundScrollSpeed.y = min(MIN_BGD_SCROLL_SPEED_Y, backgroundScrollSpeed.y + deltaTime * 0.1f)
-                scroll(deltaTime * backgroundScrollSpeed.x, deltaTime * backgroundScrollSpeed.y)
-                draw(batch)
-            }
-        }
+        renderBackground(deltaTime)
 
         // render entities
         forceSort()
@@ -89,53 +91,79 @@ class RenderSystem(
         }
 
         // render player with outline shader in case he has a shield
+        renderEntityOutlines()
+    }
+
+    private fun renderEntityOutlines() {
         batch.use(camera.combined) {
             it.shader = outlineShader
             playerEntities.forEach { entity ->
-                entity[PlayerComponent.mapper]?.let { player ->
-                    if (player.shield > 0f) {
-                        outlineColor.a = max(0.35f, player.shield / player.maxShield)
-                        outlineShader.setUniformf(outlineColorLoc, outlineColor)
-                        entity[GraphicComponent.mapper]?.let { graphic ->
-                            graphic.sprite.run {
-                                outlineShader.setUniformf(
-                                    textureSizeLoc, vec2(
-                                        texture.width.toFloat(),
-                                        texture.height.toFloat()
-                                    )
-                                )
-                                draw(it)
-                            }
-                        }
-                    }
-                }
+                renderPlayerOutlines(entity, it)
             }
             it.shader = null
         }
     }
 
-    override fun processEntity(entity: Entity, deltaTime: Float) {
-        entity[TransformComponent.mapper]?.let { transform ->
-            val (posX, posY) = transform.interpolatedPosition
-            val (sizeX, sizeY) = transform.size
-            entity[GraphicComponent.mapper]?.let { graphic ->
-                if (graphic.sprite.texture == null) {
-                    LOG.error { "Entity has no texture for rendering" }
-                    return
-                }
+    private fun renderPlayerOutlines(entity: Entity, it: Batch) {
+        val player = entity[PlayerComponent.mapper]
+        require(player != null) { "Entity |entity| must have a PlayerComponent. entity=$entity" }
 
+        if (player.shield > 0f) {
+            outlineColor.a = max(OUTLINE_COLOR_MIN_ALPHA, player.shield / player.maxShield)
+            outlineShader.setUniformf(outlineColorLoc, outlineColor)
+            entity[GraphicComponent.mapper]?.let { graphic ->
                 graphic.sprite.run {
-                    rotation = transform.rotationDeg
-                    setBounds(posX, posY, sizeX, sizeY)
-                    draw(batch)
+                    outlineShader.setUniformf(
+                        textureSizeLoc, vec2(
+                            texture.width.toFloat(),
+                            texture.height.toFloat()
+                        )
+                    )
+                    draw(it)
                 }
             }
         }
     }
 
+    private fun renderBackground(deltaTime: Float) {
+        batch.use(stage.camera.combined) {
+            background.run {
+                backgroundScrollSpeed.y = min(
+                    MIN_BGD_SCROLL_SPEED_Y,
+                    backgroundScrollSpeed.y + deltaTime * (1f / TIME_TO_RESET_BGD_SCROLL_SPEED)
+                )
+                scroll(deltaTime * backgroundScrollSpeed.x, deltaTime * backgroundScrollSpeed.y)
+                draw(batch)
+            }
+        }
+    }
+
+    override fun processEntity(entity: Entity, deltaTime: Float) {
+        val transform = entity[TransformComponent.mapper]
+        require(transform != null) { "Entity |entity| must have a TransformComponent. entity=$entity" }
+        val graphic = entity[GraphicComponent.mapper]
+        require(graphic != null) { "Entity |entity| must have a GraphicComponent. entity=$entity" }
+
+        val (posX, posY) = transform.interpolatedPosition
+        val (sizeX, sizeY) = transform.size
+        if (graphic.sprite.texture == null) {
+            LOG.error { "Entity has no texture for rendering" }
+            return
+        }
+
+        graphic.sprite.run {
+            rotation = transform.rotationDeg
+            setBounds(posX, posY, sizeX, sizeY)
+            draw(batch)
+        }
+    }
+
     override fun onEvent(type: GameEventType, data: GameEvent?) {
         val eventPowerUp = data as GameEventPowerUp
-        if (eventPowerUp.type == PowerUpType.SPEED_1) backgroundScrollSpeed.y -= 0.25f
-        else if (eventPowerUp.type == PowerUpType.SPEED_2) backgroundScrollSpeed.y -= 0.5f
+        if (eventPowerUp.type == PowerUpType.SPEED_1) {
+            backgroundScrollSpeed.y -= BGD_SCROLL_SPEED_GAIN_BOOST_1
+        } else if (eventPowerUp.type == PowerUpType.SPEED_2) {
+            backgroundScrollSpeed.y -= BGD_SCROLL_SPEED_GAIN_BOOST_2
+        }
     }
 }

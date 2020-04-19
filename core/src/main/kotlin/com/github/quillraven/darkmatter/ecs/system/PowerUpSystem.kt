@@ -5,6 +5,7 @@ import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.utils.Array
+import com.github.quillraven.darkmatter.V_WIDTH
 import com.github.quillraven.darkmatter.asset.SoundAsset
 import com.github.quillraven.darkmatter.audio.AudioService
 import com.github.quillraven.darkmatter.ecs.component.AnimationComponent
@@ -30,6 +31,10 @@ private val LOG = logger<PowerUpSystem>()
 private const val MAX_SPAWN_INTERVAL = 1.5f
 private const val MIN_SPAWN_INTERVAL = 0.9f
 private const val POWER_UP_SPEED = -8.75f
+private const val BOOST_1_SPEED_GAIN = 3f
+private const val BOOST_2_SPEED_GAIN = 3.75f
+private const val LIFE_GAIN = 25f
+private const val SHIELD_GAIN = 25f
 
 private class SpawnPattern(
     type1: PowerUpType = PowerUpType.NONE,
@@ -83,7 +88,7 @@ class PowerUpSystem(
                 return
             }
 
-            spawnPowerUp(powerUpType, 2f * MathUtils.random(0, 4), 16f)
+            spawnPowerUp(powerUpType, x = 1f * MathUtils.random(0, V_WIDTH - 1), y = 16f)
         }
     }
 
@@ -107,30 +112,31 @@ class PowerUpSystem(
     }
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        entity[TransformComponent.mapper]?.let { transform ->
-            if (transform.position.y <= 0f) {
-                entity.add(engine.createComponent(RemoveComponent::class.java))
-                return
-            }
+        val transform = entity[TransformComponent.mapper]
+        require(transform != null) { "Entity |entity| must have a TransformComponent. entity=$entity" }
 
-            playerEntities.forEach { player ->
-                player[TransformComponent.mapper]?.let { playerTransform ->
-                    playerBoundingRect.set(
-                        playerTransform.position.x,
-                        playerTransform.position.y,
-                        playerTransform.size.x,
-                        playerTransform.size.y
-                    )
-                    powerUpBoundingRect.set(
-                        transform.position.x,
-                        transform.position.y,
-                        transform.size.x,
-                        transform.size.y
-                    )
+        if (transform.position.y <= 0f) {
+            entity.add(engine.createComponent(RemoveComponent::class.java))
+            return
+        }
 
-                    if (playerBoundingRect.overlaps(powerUpBoundingRect)) {
-                        collectPowerUp(player, entity)
-                    }
+        playerEntities.forEach { player ->
+            player[TransformComponent.mapper]?.let { playerTransform ->
+                playerBoundingRect.set(
+                    playerTransform.position.x,
+                    playerTransform.position.y,
+                    playerTransform.size.x,
+                    playerTransform.size.y
+                )
+                powerUpBoundingRect.set(
+                    transform.position.x,
+                    transform.position.y,
+                    transform.size.x,
+                    transform.size.y
+                )
+
+                if (playerBoundingRect.overlaps(powerUpBoundingRect)) {
+                    collectPowerUp(player, entity)
                 }
             }
         }
@@ -142,19 +148,19 @@ class PowerUpSystem(
 
             when (powerUpCmp.type) {
                 PowerUpType.SPEED_1 -> {
-                    player[MoveComponent.mapper]?.let { it.speed.y += 3f }
+                    player[MoveComponent.mapper]?.let { it.speed.y += BOOST_1_SPEED_GAIN }
                     audioService.play(SoundAsset.BOOST_1)
                 }
                 PowerUpType.SPEED_2 -> {
-                    player[MoveComponent.mapper]?.let { it.speed.y += 3.75f }
+                    player[MoveComponent.mapper]?.let { it.speed.y += BOOST_2_SPEED_GAIN }
                     audioService.play(SoundAsset.BOOST_2)
                 }
                 PowerUpType.LIFE -> player[PlayerComponent.mapper]?.let {
-                    it.life = min(it.maxLife, it.life + 25f)
+                    it.life = min(it.maxLife, it.life + LIFE_GAIN)
                     audioService.play(SoundAsset.LIFE)
                 }
                 PowerUpType.SHIELD -> player[PlayerComponent.mapper]?.let {
-                    it.shield = min(it.maxShield, it.shield + 25f)
+                    it.shield = min(it.maxShield, it.shield + SHIELD_GAIN)
                     audioService.play(SoundAsset.SHIELD)
                 }
                 else -> LOG.error { "Unsupported power of type ${powerUpCmp.type}" }

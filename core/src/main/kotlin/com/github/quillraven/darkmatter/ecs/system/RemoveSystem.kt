@@ -14,17 +14,18 @@ class RemoveSystem(
     private val gameEventManager: GameEventManager
 ) : IteratingSystem(allOf(RemoveComponent::class).get()) {
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        entity[RemoveComponent.mapper]?.let { remove ->
-            remove.delay -= deltaTime
-            if (remove.delay <= 0f) {
-                entity[PlayerComponent.mapper]?.let { player ->
-                    gameEventManager.dispatchEvent(GameEventType.PLAYER_DEATH, GameEventPlayerDeath.apply {
-                        distance = player.distance
-                    })
-                }
+        val remove = entity[RemoveComponent.mapper]
+        require(remove != null) { "Entity |entity| must have a RemoveComponent. entity=$entity" }
 
-                engine.removeEntity(entity)
+        remove.delay -= deltaTime
+        if (remove.delay <= 0f) {
+            entity[PlayerComponent.mapper]?.let { player ->
+                gameEventManager.dispatchEvent(GameEventType.PLAYER_DEATH, GameEventPlayerDeath.apply {
+                    distance = player.distance
+                })
             }
+
+            engine.removeEntity(entity)
         }
     }
 }

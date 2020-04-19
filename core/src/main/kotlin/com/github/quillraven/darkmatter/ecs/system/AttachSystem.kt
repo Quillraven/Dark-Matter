@@ -26,24 +26,25 @@ class AttachSystem :
     }
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        entity[AttachComponent.mapper]?.let { attach ->
-            // update position for rendering
-            entity[TransformComponent.mapper]?.let { transform ->
-                attach.entity[TransformComponent.mapper]?.let { attachTransform ->
-                    transform.interpolatedPosition.set(
-                        attachTransform.interpolatedPosition.x + attach.offset.x,
-                        attachTransform.interpolatedPosition.y + attach.offset.y,
-                        transform.position.z
-                    )
-                }
-            }
+        val attach = entity[AttachComponent.mapper]
+        require(attach != null) { "Entity |entity| must have an AttachComponent. entity=$entity" }
+        val graphic = entity[GraphicComponent.mapper]
+        require(graphic != null) { "Entity |entity| must have a GraphicComponent. entity=$entity" }
+        val transform = entity[TransformComponent.mapper]
+        require(transform != null) { "Entity |entity| must have a TransformComponent. entity=$entity" }
 
-            // update graphic alpha
-            entity[GraphicComponent.mapper]?.let { graphic ->
-                attach.entity[GraphicComponent.mapper]?.let { attachGraphic ->
-                    graphic.sprite.setAlpha(attachGraphic.sprite.color.a)
-                }
-            }
+        // update position
+        attach.entity[TransformComponent.mapper]?.let { attachTransform ->
+            transform.interpolatedPosition.set(
+                attachTransform.interpolatedPosition.x + attach.offset.x,
+                attachTransform.interpolatedPosition.y + attach.offset.y,
+                transform.position.z
+            )
+        }
+
+        // update graphic alpha
+        attach.entity[GraphicComponent.mapper]?.let { attachGraphic ->
+            graphic.sprite.setAlpha(attachGraphic.sprite.color.a)
         }
     }
 

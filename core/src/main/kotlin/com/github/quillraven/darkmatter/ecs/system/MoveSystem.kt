@@ -60,17 +60,18 @@ class MoveSystem :
     }
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        entity[MoveComponent.mapper]?.let { move ->
-            entity[TransformComponent.mapper]?.let { transform ->
-                val player = entity[PlayerComponent.mapper]
-                if (player != null) {
-                    entity[FacingComponent.mapper]?.let { facing ->
-                        movePlayer(transform, move, player, facing, deltaTime)
-                    }
-                } else {
-                    moveEntity(transform, move, deltaTime)
-                }
+        val transform = entity[TransformComponent.mapper]
+        require(transform != null) { "Entity |entity| must have a TransformComponent. entity=$entity" }
+        val move = entity[MoveComponent.mapper]
+        require(move != null) { "Entity |entity| must have a MoveComponent. entity=$entity" }
+
+        val player = entity[PlayerComponent.mapper]
+        if (player != null) {
+            entity[FacingComponent.mapper]?.let { facing ->
+                movePlayer(transform, move, player, facing, deltaTime)
             }
+        } else {
+            moveEntity(transform, move, deltaTime)
         }
     }
 

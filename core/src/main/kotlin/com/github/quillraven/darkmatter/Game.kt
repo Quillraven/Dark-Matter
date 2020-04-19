@@ -2,8 +2,6 @@ package com.github.quillraven.darkmatter
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.profiling.GLProfiler
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
@@ -25,9 +23,8 @@ const val V_HEIGHT = 16
 const val UNIT_SCALE = 1 / 8f
 
 class Game : KtxGame<KtxScreen>() {
-    val batch: Batch by lazy { SpriteBatch() }
     val stage: Stage by lazy {
-        Stage(FitViewport(V_WIDTH_PIXELS.toFloat(), V_HEIGHT_PIXELS.toFloat()), batch)
+        Stage(FitViewport(V_WIDTH_PIXELS.toFloat(), V_HEIGHT_PIXELS.toFloat()))
     }
     val assets: AssetStorage by lazy {
         KtxAsync.initiate()
@@ -59,7 +56,6 @@ class Game : KtxGame<KtxScreen>() {
         }
 
         super.dispose()
-        batch.dispose()
         assets.dispose()
         stage.dispose()
     }

@@ -7,6 +7,7 @@ import ktx.log.logger
 import java.util.*
 
 private val LOG = logger<GameEventManager>()
+private const val INITIAL_LISTENER_CAPACITY = 8
 
 enum class GameEventType {
     PLAYER_SPAWN,
@@ -52,7 +53,7 @@ class GameEventManager {
     fun addListener(type: GameEventType, listener: GameEventListener) {
         var eventListeners = listeners[type]
         if (eventListeners == null) {
-            eventListeners = Array(8)
+            eventListeners = Array(INITIAL_LISTENER_CAPACITY)
             listeners[type] = eventListeners
         }
 

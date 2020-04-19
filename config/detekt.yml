@@ -1,0 +1,3 @@
+style:
+  MagicNumber:
+    ignoreNumbers: '-1,0,0.001,0.5,1,2,100,1000'

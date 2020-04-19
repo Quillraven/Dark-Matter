@@ -1,11 +1,10 @@
 package com.github.quillraven.darkmatter.screen
 
 import com.badlogic.ashley.core.PooledEngine
-import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.quillraven.darkmatter.Game
+import com.github.quillraven.darkmatter.UNIT_SCALE
 import com.github.quillraven.darkmatter.V_HEIGHT
 import com.github.quillraven.darkmatter.V_WIDTH
 import com.github.quillraven.darkmatter.asset.MusicAsset
@@ -25,6 +24,7 @@ import com.github.quillraven.darkmatter.ecs.component.TransformComponent
 import com.github.quillraven.darkmatter.ecs.system.AnimationSystem
 import com.github.quillraven.darkmatter.ecs.system.AttachSystem
 import com.github.quillraven.darkmatter.ecs.system.CameraShakeSystem
+import com.github.quillraven.darkmatter.ecs.system.DAMAGE_AREA_HEIGHT
 import com.github.quillraven.darkmatter.ecs.system.DamageSystem
 import com.github.quillraven.darkmatter.ecs.system.DebugSystem
 import com.github.quillraven.darkmatter.ecs.system.MoveSystem
@@ -44,23 +44,28 @@ import ktx.ashley.entity
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
 import ktx.log.logger
+import ktx.math.vec2
 import kotlin.math.min
 
 private val LOG = logger<GameScreen>()
 private const val MAX_DELTA_TIME = 1 / 30f
+private const val PLAYER_START_SPEED = 3f
+private const val SHIP_FIRE_OFFSET_X = 1f // in pixels
+private const val SHIP_FIRE_OFFSET_Y = -6f // in pixels
 
 class GameScreen(
     private val game: Game,
-    private val batch: Batch = game.batch,
     private val assets: AssetStorage = game.assets,
     private val gameEventManager: GameEventManager = game.gameEventManager,
     private val stage: Stage = game.stage,
-    private val outlineShader: ShaderProgram = game.assets[ShaderProgramAsset.OUTLINE.descriptor],
     private val audioService: AudioService = game.audioService
 ) : KtxScreen, GameEventListener {
     private val viewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
+    private val playerGraphicSize = vec2()
     private val engine = PooledEngine().apply {
         val atlas = assets[TextureAtlasAsset.GRAPHICS.descriptor]
+        val playerGraphicRegion = atlas.findRegion("ship_base")
+        playerGraphicSize.set(playerGraphicRegion.originalWidth.toFloat(), playerGraphicRegion.originalHeight.toFloat())
 
         addSystem(DebugSystem(gameEventManager, audioService))
         addSystem(PowerUpSystem(gameEventManager, audioService))
@@ -69,7 +74,7 @@ class GameScreen(
         addSystem(DamageSystem(gameEventManager, audioService))
         addSystem(
             PlayerAnimationSystem(
-                atlas.findRegion("ship_base"),
+                playerGraphicRegion,
                 atlas.findRegion("ship_left"),
                 atlas.findRegion("ship_right")
             )
@@ -81,8 +86,7 @@ class GameScreen(
         addSystem(
             RenderSystem(
                 stage,
-                batch,
-                outlineShader,
+                assets[ShaderProgramAsset.OUTLINE.descriptor],
                 viewport,
                 gameEventManager,
                 assets[TextureAsset.BACKGROUND.descriptor]
@@ -143,11 +147,11 @@ class GameScreen(
             with<PlayerComponent>()
             with<FacingComponent>()
             with<MoveComponent> {
-                speed.y = 3f
+                speed.y = PLAYER_START_SPEED
             }
             with<TransformComponent> {
                 setInitialPosition(V_WIDTH * 0.5f - size.x * 0.5f, V_HEIGHT * 0.5f - size.y * 0.5f, 1f)
-                size.set(10f / 8f, 9f / 8f)
+                size.set(playerGraphicSize.x * UNIT_SCALE, playerGraphicSize.y * UNIT_SCALE)
             }
             with<GraphicComponent>()
         }
@@ -157,7 +161,7 @@ class GameScreen(
             with<TransformComponent>()
             with<AttachComponent> {
                 entity = ship
-                offset.set(1f / 8f, -0.7f)
+                offset.set(SHIP_FIRE_OFFSET_X * UNIT_SCALE, SHIP_FIRE_OFFSET_Y * UNIT_SCALE)
             }
             with<GraphicComponent>()
             with<AnimationComponent> {
@@ -175,7 +179,7 @@ class GameScreen(
     private fun spawnDarkMatter() {
         engine.entity {
             with<TransformComponent> {
-                size.set(9f, 2f)
+                size.set(V_WIDTH.toFloat(), DAMAGE_AREA_HEIGHT)
             }
             with<AnimationComponent> {
                 type = AnimationType.DARK_MATTER

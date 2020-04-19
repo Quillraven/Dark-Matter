@@ -14,6 +14,8 @@ import ktx.ashley.exclude
 import ktx.ashley.get
 import ktx.math.vec2
 
+private const val TOUCH_TOLERANCE_DISTANCE = 0.1f
+
 class PlayerInputSystem(
     private val gameViewport: Viewport
 ) : IteratingSystem(
@@ -24,17 +26,18 @@ class PlayerInputSystem(
     private val tmpVec = vec2()
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
+        val facing = entity[FacingComponent.mapper]
+        require(facing != null) { "Entity |entity| must have a FacingComponent. entity=$entity" }
+        val transform = entity[TransformComponent.mapper]
+        require(transform != null) { "Entity |entity| must have a TransformComponent. entity=$entity" }
+
         tmpVec.x = Gdx.input.x.toFloat()
         gameViewport.unproject(tmpVec)
-        entity[TransformComponent.mapper]?.let { transform ->
-            entity[FacingComponent.mapper]?.let { facing ->
-                val distX = tmpVec.x - transform.position.x - transform.size.x * 0.5f
-                facing.direction = when {
-                    distX < -0.1f -> FacingDirection.LEFT
-                    distX > 0.1f -> FacingDirection.RIGHT
-                    else -> FacingDirection.DEFAULT
-                }
-            }
+        val distX = tmpVec.x - transform.position.x - transform.size.x * 0.5f
+        facing.direction = when {
+            distX < -TOUCH_TOLERANCE_DISTANCE -> FacingDirection.LEFT
+            distX > TOUCH_TOLERANCE_DISTANCE -> FacingDirection.RIGHT
+            else -> FacingDirection.DEFAULT
         }
     }
 }

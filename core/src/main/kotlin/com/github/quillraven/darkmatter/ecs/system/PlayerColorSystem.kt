@@ -19,6 +19,8 @@ import ktx.ashley.exclude
 import ktx.ashley.get
 import kotlin.math.min
 
+private const val TIME_TO_REACH_TARGET_COLOR = 0.25f // in seconds
+
 class PlayerColorSystem(
     private val gameEventManager: GameEventManager
 ) : IteratingSystem(allOf(PlayerComponent::class, GraphicComponent::class).exclude(RemoveComponent::class).get()),
@@ -39,21 +41,22 @@ class PlayerColorSystem(
     }
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        entity[GraphicComponent.mapper]?.let { graphic ->
-            val color = graphic.sprite.color
-            val newGB = MathUtils.lerp(sourceColor, targetColor, progress)
-            graphic.sprite.setColor(
-                color.r,
-                newGB,
-                newGB,
-                color.a
-            )
-        }
+        val graphic = entity[GraphicComponent.mapper]
+        require(graphic != null) { "Entity |entity| must have a GraphicComponent. entity=$entity" }
+
+        val color = graphic.sprite.color
+        val newGB = MathUtils.lerp(sourceColor, targetColor, progress)
+        graphic.sprite.setColor(
+            color.r,
+            newGB,
+            newGB,
+            color.a
+        )
     }
 
     override fun update(deltaTime: Float) {
         if (progress < 1f) {
-            progress = min(1f, progress + deltaTime * 4f)
+            progress = min(1f, progress + deltaTime * (1f / TIME_TO_REACH_TARGET_COLOR))
             super.update(deltaTime)
         }
     }

@@ -18,21 +18,22 @@ class PlayerAnimationSystem(
     private var lastDirection = FacingDirection.DEFAULT
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        entity[FacingComponent.mapper]?.let { facing ->
-            entity[GraphicComponent.mapper]?.let { graphic ->
-                if (facing.direction == lastDirection && graphic.sprite.texture != null) {
-                    // texture already set and direction does not change
-                    return
-                }
+        val facing = entity[FacingComponent.mapper]
+        require(facing != null) { "Entity |entity| must have a FacingComponent. entity=$entity" }
+        val graphic = entity[GraphicComponent.mapper]
+        require(graphic != null) { "Entity |entity| must have a GraphicComponent. entity=$entity" }
 
-                lastDirection = facing.direction
-                val region = when (facing.direction) {
-                    FacingDirection.RIGHT -> rightRegion
-                    FacingDirection.LEFT -> leftRegion
-                    else -> defaultRegion
-                }
-                graphic.setSpriteRegion(region)
-            }
+        if (facing.direction == lastDirection && graphic.sprite.texture != null) {
+            // texture already set and direction does not change
+            return
         }
+
+        lastDirection = facing.direction
+        val region = when (facing.direction) {
+            FacingDirection.RIGHT -> rightRegion
+            FacingDirection.LEFT -> leftRegion
+            else -> defaultRegion
+        }
+        graphic.setSpriteRegion(region)
     }
 }

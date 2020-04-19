@@ -34,24 +34,27 @@ class AnimationSystem(
 
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        entity[AnimationComponent.mapper]?.let { aniCmp ->
-            if (aniCmp.type == AnimationType.NONE) {
-                LOG.error { "No aniCmp type specified" }
-                return
-            }
+        val aniCmp = entity[AnimationComponent.mapper]
+        require(aniCmp != null) { "Entity |entity| must have an AnimationComponent. entity=$entity" }
+        val graphic = entity[GraphicComponent.mapper]
+        require(graphic != null) { "Entity |entity| must have a GraphicComponent. entity=$entity" }
 
-            if (aniCmp.animation.type == aniCmp.type) {
-                // animation is correct -> update it
-                aniCmp.stateTime += deltaTime
-            } else {
-                // change animation
-                aniCmp.stateTime = 0f
-                aniCmp.animation = getAnimation(aniCmp.type)
-            }
-
-            val frame = aniCmp.animation.getKeyFrame(aniCmp.stateTime)
-            entity[GraphicComponent.mapper]?.setSpriteRegion(frame)
+        if (aniCmp.type == AnimationType.NONE) {
+            LOG.error { "No aniCmp type specified" }
+            return
         }
+
+        if (aniCmp.animation.type == aniCmp.type) {
+            // animation is correct -> update it
+            aniCmp.stateTime += deltaTime
+        } else {
+            // change animation
+            aniCmp.stateTime = 0f
+            aniCmp.animation = getAnimation(aniCmp.type)
+        }
+
+        val frame = aniCmp.animation.getKeyFrame(aniCmp.stateTime)
+        graphic.setSpriteRegion(frame)
     }
 
     private fun getAnimation(type: AnimationType): Animation2D {

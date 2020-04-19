@@ -7,5 +7,7 @@ object Versions {
     const val gdx = "1.9.11-SNAPSHOT"
     const val ktx = "1.9.10-SNAPSHOT"
     const val ashley = "1.7.3"
+    const val detekt = "1.7.4"
     val java = JavaVersion.VERSION_1_8
+    const val jvm = "1.8"
 }
