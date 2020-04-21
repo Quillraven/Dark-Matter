@@ -92,13 +92,6 @@ class RenderSystem(
 
         // render player with outline shader in case he has a shield
         renderEntityOutlines()
-
-        // render UI
-        stage.run {
-            viewport.apply()
-            act(deltaTime)
-            draw()
-        }
     }
 
     private fun renderEntityOutlines() {
