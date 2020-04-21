@@ -2,12 +2,17 @@ package com.github.quillraven.darkmatter.ui
 
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.Group
-import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.forever
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence
 import com.badlogic.gdx.utils.Align
+import com.github.quillraven.darkmatter.V_HEIGHT_PIXELS
 import com.github.quillraven.darkmatter.V_WIDTH_PIXELS
 import ktx.actors.plus
 import ktx.actors.plusAssign
 import ktx.scene2d.image
+import ktx.scene2d.imageButton
 import ktx.scene2d.label
 import ktx.scene2d.scene2d
 import kotlin.math.roundToInt
@@ -20,36 +25,65 @@ private const val GAME_HUD_AREA_HEIGHT = 9f
 private const val MIN_SPEED = -99f
 private const val MAX_SPEED = 999f
 private const val MAX_DISTANCE = 999999f
-private const val WARNING_FADE_IN_TIME = 0.5f
-private const val WARNING_FADE_OUT_TIME = 1f
+private const val ACTOR_FADE_IN_TIME = 0.5f
+private const val ACTOR_FADE_OUT_TIME = 1f
 private const val MAX_WARNING_FLASHES = 3
+private const val TOUCH_TO_BEGIN_LABEL_OFFSET_Y = 80f
+private const val PADDING_TOP = 2f
+private const val PADDING_LEFT_RIGHT = 2f
 
 class GameUI : Group() {
-    private val warningImage = scene2d.image(UIImage.WARNING.atlasKey) {
+    private val warningImage = scene2d.image(SkinImage.WARNING.atlasKey) {
         color.a = 0f
     }
-    private val lifeBarImage = scene2d.image(UIImage.LIFE_BAR.atlasKey) {
+    private val lifeBarImage = scene2d.image(SkinImage.LIFE_BAR.atlasKey) {
         width = GAME_HUD_SMALL_AREA_WIDTH
         height = GAME_HUD_AREA_HEIGHT
     }
-    private val shieldBarImage = scene2d.image(UIImage.SHIELD_BAR.atlasKey) {
+    private val shieldBarImage = scene2d.image(SkinImage.SHIELD_BAR.atlasKey) {
         width = GAME_HUD_SMALL_AREA_WIDTH
         height = GAME_HUD_AREA_HEIGHT
     }
-    private val distanceLabel = scene2d.label("0", LabelStyle.DEFAULT.name) {
+    private val distanceLabel = scene2d.label("0", SkinLabel.DEFAULT.name) {
         width = GAME_HUD_LARGE_AREA_WIDTH
         setAlignment(Align.center)
     }
-    private val speedLabel = scene2d.label("0", LabelStyle.DEFAULT.name) {
+    private val speedLabel = scene2d.label("0", SkinLabel.DEFAULT.name) {
         width = GAME_HUD_SMALL_AREA_WIDTH
         setAlignment(Align.center)
     }
+    val touchToBeginLabel = scene2d.label("Touch to begin", SkinLabel.LARGE.name) {
+        y = V_HEIGHT_PIXELS - TOUCH_TO_BEGIN_LABEL_OFFSET_Y
+        wrap = true
+        width = V_WIDTH_PIXELS.toFloat()
+        setAlignment(Align.center)
+        color.a = 0f
+        this += forever(sequence(fadeIn(ACTOR_FADE_IN_TIME) + fadeOut(ACTOR_FADE_OUT_TIME)))
+    }
+    val quitImageButton = scene2d.imageButton(SkinImageButton.QUIT.name) {
+        y = V_HEIGHT_PIXELS - height - PADDING_TOP
+        x = PADDING_LEFT_RIGHT
+        color.a = 0.5f
+    }
+    val pauseResumeButton = scene2d.imageButton(SkinImageButton.PAUSE_PLAY.name) {
+        y = V_HEIGHT_PIXELS - height - PADDING_TOP
+        x = V_WIDTH_PIXELS - width - PADDING_LEFT_RIGHT
+        color.a = 0.5f
+    }
 
     init {
+        // touch to begin label
+        this += touchToBeginLabel
+
+        // top quit, pause and play buttons
+        this += quitImageButton
+        this += pauseResumeButton
+
+        // bottom game hud
         var gameHudX = 0f
         var gameHudHeight = 0f
         var gameHudWidth = 0f
-        this += scene2d.image(UIImage.GAME_HUD.atlasKey) {
+        this += scene2d.image(SkinImage.GAME_HUD.atlasKey) {
             gameHudX = V_WIDTH_PIXELS * 0.5f - width * 0.5f
             gameHudHeight = height
             gameHudWidth = width
@@ -110,9 +144,7 @@ class GameUI : Group() {
 
     fun showWarning() {
         if (warningImage.actions.size <= MAX_WARNING_FLASHES) {
-            warningImage += Actions.sequence(
-                Actions.fadeIn(WARNING_FADE_IN_TIME) + Actions.fadeOut(WARNING_FADE_OUT_TIME)
-            )
+            warningImage += sequence(fadeIn(ACTOR_FADE_IN_TIME) + fadeOut(ACTOR_FADE_OUT_TIME))
         }
     }
 }
