@@ -32,7 +32,6 @@ class AnimationSystem(
         engine.removeEntityListener(this)
     }
 
-
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val aniCmp = entity[AnimationComponent.mapper]
         require(aniCmp != null) { "Entity |entity| must have an AnimationComponent. entity=$entity" }
@@ -79,6 +78,8 @@ class AnimationSystem(
     override fun entityAdded(entity: Entity) {
         entity[AnimationComponent.mapper]?.let { aniCmp ->
             aniCmp.animation = getAnimation(aniCmp.type)
+            val frame = aniCmp.animation.getKeyFrame(aniCmp.stateTime)
+            entity[GraphicComponent.mapper]?.setSpriteRegion(frame)
         }
     }
 }
