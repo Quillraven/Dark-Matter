@@ -30,6 +30,7 @@ class MenuScreen(
 
     override fun hide() {
         LOG.debug { "Hide" }
+        audioService.stop()
         KtxAsync.launch {
             assets.unload(MusicAsset.MENU.descriptor)
         }

@@ -30,6 +30,7 @@ class GameOverScreen(
 
     override fun hide() {
         LOG.debug { "Hide" }
+        audioService.stop()
         KtxAsync.launch {
             assets.unload(MusicAsset.GAME_OVER.descriptor)
         }
