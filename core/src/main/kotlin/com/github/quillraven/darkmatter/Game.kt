@@ -30,7 +30,9 @@ const val UNIT_SCALE = 1 / 8f
 
 class Game : KtxGame<KtxScreen>() {
     val stage: Stage by lazy {
-        Stage(FitViewport(V_WIDTH_PIXELS.toFloat(), V_HEIGHT_PIXELS.toFloat()))
+        val result = Stage(FitViewport(V_WIDTH_PIXELS.toFloat(), V_HEIGHT_PIXELS.toFloat()))
+        Gdx.input.inputProcessor = result
+        result
     }
     val assets: AssetStorage by lazy {
         KtxAsync.initiate()
