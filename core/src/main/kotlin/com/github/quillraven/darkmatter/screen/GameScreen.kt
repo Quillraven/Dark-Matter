@@ -1,7 +1,9 @@
 package com.github.quillraven.darkmatter.screen
 
 import com.badlogic.ashley.core.PooledEngine
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.quillraven.darkmatter.Game
 import com.github.quillraven.darkmatter.UNIT_SCALE
@@ -47,6 +49,8 @@ import com.github.quillraven.darkmatter.event.GameEventPowerUp
 import com.github.quillraven.darkmatter.event.GameEventType
 import com.github.quillraven.darkmatter.ui.GameUI
 import kotlinx.coroutines.launch
+import ktx.actors.onChangeEvent
+import ktx.actors.onClick
 import ktx.actors.plusAssign
 import ktx.app.KtxScreen
 import ktx.ashley.entity
@@ -72,7 +76,24 @@ class GameScreen(
 ) : KtxScreen, GameEventListener {
     private val viewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
     private val playerGraphicSize = vec2()
-    private val ui = GameUI()
+    private val ui = GameUI().apply {
+        quitImageButton.onClick {
+            game.setScreen<MenuScreen>()
+        }
+        pauseResumeButton.onChangeEvent { _, actor ->
+            when (actor.isChecked) {
+                true -> audioService.pause()
+                else -> audioService.resume()
+            }
+        }
+    }
+    private val renderSystem = RenderSystem(
+        stage,
+        assets[ShaderProgramAsset.OUTLINE.descriptor],
+        viewport,
+        gameEventManager,
+        assets[TextureAsset.BACKGROUND.descriptor]
+    )
     private val engine = PooledEngine().apply {
         val atlas = assets[TextureAtlasAsset.GRAPHICS.descriptor]
         val playerGraphicRegion = atlas.findRegion("ship_base")
@@ -94,15 +115,7 @@ class GameScreen(
         addSystem(AnimationSystem(atlas))
         addSystem(CameraShakeSystem(viewport.camera, gameEventManager))
         addSystem(PlayerColorSystem(gameEventManager))
-        addSystem(
-            RenderSystem(
-                stage,
-                assets[ShaderProgramAsset.OUTLINE.descriptor],
-                viewport,
-                gameEventManager,
-                assets[TextureAsset.BACKGROUND.descriptor]
-            )
-        )
+        addSystem(renderSystem)
         addSystem(RemoveSystem(gameEventManager))
     }
 
@@ -127,14 +140,23 @@ class GameScreen(
             audioService.play(MusicAsset.GAME)
         }
 
-        // update stage
+        setupUI()
+    }
+
+    private fun setupUI() {
         stage.clear()
         stage += ui
+        ui.pauseResumeButton.run {
+            touchable = Touchable.disabled
+            isChecked = false
+        }
+        ui.touchToBeginLabel.isVisible = true
     }
 
     override fun hide() {
         LOG.debug { "Hide" }
         gameEventManager.removeListener(this)
+        audioService.stop()
         KtxAsync.launch {
             assets.unload(MusicAsset.GAME.descriptor)
         }
@@ -147,9 +169,25 @@ class GameScreen(
     }
 
     override fun render(delta: Float) {
+        if (Gdx.input.justTouched() && ui.touchToBeginLabel.isVisible) {
+            ui.touchToBeginLabel.isVisible = false
+            ui.pauseResumeButton.touchable = Touchable.enabled
+        }
+
         val deltaTime = min(delta, MAX_DELTA_TIME)
-        engine.update(deltaTime)
-        audioService.update()
+        if (ui.pauseResumeButton.isChecked || ui.touchToBeginLabel.isVisible) {
+            renderSystem.update(0f)
+        } else {
+            engine.update(deltaTime)
+            audioService.update()
+        }
+
+        // render UI
+        stage.run {
+            viewport.apply()
+            act(deltaTime)
+            draw()
+        }
     }
 
     override fun dispose() {
