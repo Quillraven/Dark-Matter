@@ -16,6 +16,9 @@ private const val MAX_SOUND_INSTANCES = 16
 interface AudioService {
     fun play(soundAsset: SoundAsset, volume: Float = 1f) = Unit
     fun play(musicAsset: MusicAsset, volume: Float = 1f, loop: Boolean = true) = Unit
+    fun pause()
+    fun resume()
+    fun stop()
     fun update() = Unit
 }
 
@@ -100,6 +103,18 @@ class DefaultAudioService(private val assets: AssetStorage) : AudioService {
             }
             soundRequests.clear()
         }
+    }
+
+    override fun pause() {
+        currentMusic?.pause()
+    }
+
+    override fun resume() {
+        currentMusic?.play()
+    }
+
+    override fun stop() {
+        currentMusic?.stop()
     }
 }
 
