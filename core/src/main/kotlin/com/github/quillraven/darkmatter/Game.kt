@@ -1,5 +1,6 @@
 package com.github.quillraven.darkmatter
 
+import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.profiling.GLProfiler
@@ -7,8 +8,22 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.quillraven.darkmatter.asset.BitmapFontAsset
 import com.github.quillraven.darkmatter.asset.MusicAsset
+import com.github.quillraven.darkmatter.asset.ShaderProgramAsset
+import com.github.quillraven.darkmatter.asset.TextureAsset
 import com.github.quillraven.darkmatter.asset.TextureAtlasAsset
 import com.github.quillraven.darkmatter.audio.DefaultAudioService
+import com.github.quillraven.darkmatter.ecs.system.AnimationSystem
+import com.github.quillraven.darkmatter.ecs.system.AttachSystem
+import com.github.quillraven.darkmatter.ecs.system.CameraShakeSystem
+import com.github.quillraven.darkmatter.ecs.system.DamageSystem
+import com.github.quillraven.darkmatter.ecs.system.DebugSystem
+import com.github.quillraven.darkmatter.ecs.system.MoveSystem
+import com.github.quillraven.darkmatter.ecs.system.PlayerAnimationSystem
+import com.github.quillraven.darkmatter.ecs.system.PlayerColorSystem
+import com.github.quillraven.darkmatter.ecs.system.PlayerInputSystem
+import com.github.quillraven.darkmatter.ecs.system.PowerUpSystem
+import com.github.quillraven.darkmatter.ecs.system.RemoveSystem
+import com.github.quillraven.darkmatter.ecs.system.RenderSystem
 import com.github.quillraven.darkmatter.event.GameEventManager
 import com.github.quillraven.darkmatter.screen.LoadingScreen
 import com.github.quillraven.darkmatter.ui.createSkin
@@ -29,6 +44,7 @@ const val V_HEIGHT = 16
 const val UNIT_SCALE = 1 / 8f
 
 class Game : KtxGame<KtxScreen>() {
+    val gameViewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
     val stage: Stage by lazy {
         val result = Stage(FitViewport(V_WIDTH_PIXELS.toFloat(), V_HEIGHT_PIXELS.toFloat()))
         Gdx.input.inputProcessor = result
@@ -40,6 +56,38 @@ class Game : KtxGame<KtxScreen>() {
     }
     val gameEventManager by lazy { GameEventManager() }
     val audioService by lazy { DefaultAudioService(assets) }
+    val engine by lazy {
+        PooledEngine().apply {
+            val atlas = assets[TextureAtlasAsset.GRAPHICS.descriptor]
+
+            addSystem(DebugSystem(gameEventManager, audioService))
+            addSystem(PowerUpSystem(gameEventManager, audioService))
+            addSystem(PlayerInputSystem(gameViewport))
+            addSystem(MoveSystem(gameEventManager))
+            addSystem(DamageSystem(gameEventManager, audioService))
+            addSystem(
+                PlayerAnimationSystem(
+                    atlas.findRegion("ship_base"),
+                    atlas.findRegion("ship_left"),
+                    atlas.findRegion("ship_right")
+                )
+            )
+            addSystem(AttachSystem())
+            addSystem(AnimationSystem(atlas))
+            addSystem(CameraShakeSystem(gameViewport.camera, gameEventManager))
+            addSystem(PlayerColorSystem(gameEventManager))
+            addSystem(
+                RenderSystem(
+                    stage,
+                    assets[ShaderProgramAsset.OUTLINE.descriptor],
+                    gameViewport,
+                    gameEventManager,
+                    assets[TextureAsset.BACKGROUND.descriptor]
+                )
+            )
+            addSystem(RemoveSystem(gameEventManager))
+        }
+    }
     private val profiler by lazy { GLProfiler(Gdx.graphics) }
 
     override fun create() {
