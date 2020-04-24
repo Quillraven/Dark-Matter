@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
+import com.badlogic.gdx.utils.I18NBundle
 
 enum class SoundAsset(
     fileName: String,
@@ -80,4 +81,12 @@ enum class BitmapFontAsset(
 ) {
     FONT_LARGE_GRADIENT("font11_gradient.fnt"),
     FONT_DEFAULT("font8.fnt")
+}
+
+enum class I18NBundleAsset(
+    fileName: String,
+    directory: String = "i18n",
+    val descriptor: AssetDescriptor<I18NBundle> = AssetDescriptor("$directory/$fileName", I18NBundle::class.java)
+) {
+    DEFAULT("i18n")
 }
