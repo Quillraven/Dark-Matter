@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.profiling.GLProfiler
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.github.quillraven.darkmatter.asset.BitmapFontAsset
+import com.github.quillraven.darkmatter.asset.I18NBundleAsset
 import com.github.quillraven.darkmatter.asset.MusicAsset
 import com.github.quillraven.darkmatter.asset.ShaderProgramAsset
 import com.github.quillraven.darkmatter.asset.TextureAsset
@@ -98,7 +99,8 @@ class Game : KtxGame<KtxScreen>() {
         var old = System.currentTimeMillis()
         val assetRefs = gdxListOf(
             TextureAtlasAsset.values().filter { it.isSkinAtlas }.map { assets.loadAsync(it.descriptor) },
-            BitmapFontAsset.values().map { assets.loadAsync(it.descriptor) }
+            BitmapFontAsset.values().map { assets.loadAsync(it.descriptor) },
+            I18NBundleAsset.values().map { assets.loadAsync(it.descriptor) }
         ).flatten()
         KtxAsync.launch {
             assetRefs.joinAll()

@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.forever
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence
 import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.utils.I18NBundle
 import com.github.quillraven.darkmatter.V_HEIGHT_PIXELS
 import com.github.quillraven.darkmatter.V_WIDTH_PIXELS
 import ktx.actors.plus
@@ -32,7 +33,7 @@ private const val TOUCH_TO_BEGIN_LABEL_OFFSET_Y = 80f
 private const val PADDING_TOP = 2f
 private const val PADDING_LEFT_RIGHT = 2f
 
-class GameUI : Group() {
+class GameUI(bundle: I18NBundle) : Group() {
     private val warningImage = scene2d.image(SkinImage.WARNING.atlasKey) {
         color.a = 0f
     }
@@ -52,7 +53,7 @@ class GameUI : Group() {
         width = GAME_HUD_SMALL_AREA_WIDTH
         setAlignment(Align.center)
     }
-    val touchToBeginLabel = scene2d.label("Touch to begin", SkinLabel.LARGE.name) {
+    val touchToBeginLabel = scene2d.label(bundle["touchToBegin"], SkinLabel.LARGE.name) {
         y = V_HEIGHT_PIXELS - TOUCH_TO_BEGIN_LABEL_OFFSET_Y
         wrap = true
         width = V_WIDTH_PIXELS.toFloat()

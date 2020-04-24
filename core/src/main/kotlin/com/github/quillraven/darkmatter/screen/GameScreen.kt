@@ -3,6 +3,7 @@ package com.github.quillraven.darkmatter.screen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.github.quillraven.darkmatter.Game
+import com.github.quillraven.darkmatter.asset.I18NBundleAsset
 import com.github.quillraven.darkmatter.asset.MusicAsset
 import com.github.quillraven.darkmatter.asset.SoundAsset.SPAWN
 import com.github.quillraven.darkmatter.asset.TextureAtlasAsset
@@ -42,7 +43,7 @@ class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener 
         val playerGraphicRegion = atlas.findRegion("ship_base")
         set(playerGraphicRegion.originalWidth.toFloat(), playerGraphicRegion.originalHeight.toFloat())
     }
-    private val ui = GameUI().apply {
+    private val ui = GameUI(assets[I18NBundleAsset.DEFAULT.descriptor]).apply {
         quitImageButton.onClick {
             game.setScreen<MenuScreen>()
         }
