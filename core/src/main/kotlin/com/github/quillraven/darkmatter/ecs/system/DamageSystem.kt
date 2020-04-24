@@ -14,6 +14,7 @@ import com.github.quillraven.darkmatter.event.GameEventManager
 import com.github.quillraven.darkmatter.event.GameEventPlayerBlock
 import com.github.quillraven.darkmatter.event.GameEventPlayerHit
 import com.github.quillraven.darkmatter.event.GameEventType
+import ktx.ashley.addComponent
 import ktx.ashley.allOf
 import ktx.ashley.entity
 import ktx.ashley.exclude
@@ -92,9 +93,9 @@ class DamageSystem(
                 maxLife = player.maxLife
             })
             if (player.life <= 0f) {
-                entity.add(engine.createComponent(RemoveComponent::class.java).apply {
+                entity.addComponent<RemoveComponent>(engine) {
                     delay = 1f
-                })
+                }
                 entity[GraphicComponent.mapper]?.sprite?.setAlpha(0f)
                 engine.entity {
                     with<TransformComponent> {

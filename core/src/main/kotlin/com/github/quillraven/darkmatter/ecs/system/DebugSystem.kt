@@ -17,6 +17,7 @@ import com.github.quillraven.darkmatter.event.GameEventPowerUp
 import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.ashley.allOf
 import ktx.ashley.get
+import ktx.ashley.getSystem
 import kotlin.math.max
 import kotlin.math.min
 
@@ -57,11 +58,11 @@ class DebugSystem(
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_4) -> {
                         // disable movement
-                        engine.getSystem(MoveSystem::class.java).setProcessing(false)
+                        engine.getSystem<MoveSystem>().setProcessing(false)
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_5) -> {
                         // enable movement
-                        engine.getSystem(MoveSystem::class.java).setProcessing(true)
+                        engine.getSystem<MoveSystem>().setProcessing(true)
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_6) -> {
                         // trigger player damage event
@@ -74,7 +75,7 @@ class DebugSystem(
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_7) -> {
                         // trigger player heal event
-                        engine.getSystem(PowerUpSystem::class.java)
+                        engine.getSystem<PowerUpSystem>()
                             .spawnPowerUp(PowerUpType.LIFE, transform.position.x, transform.position.y)
                     }
                     Gdx.input.isKeyPressed(Input.Keys.NUM_8) -> {

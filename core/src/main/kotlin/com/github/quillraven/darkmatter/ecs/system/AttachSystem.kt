@@ -8,6 +8,7 @@ import com.github.quillraven.darkmatter.ecs.component.AttachComponent
 import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
 import com.github.quillraven.darkmatter.ecs.component.RemoveComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
+import ktx.ashley.addComponent
 import ktx.ashley.allOf
 import ktx.ashley.get
 
@@ -52,7 +53,7 @@ class AttachSystem :
         entities.forEach {
             it[AttachComponent.mapper]?.let { attach ->
                 if (attach.entity == entity) {
-                    it.add(engine.createComponent(RemoveComponent::class.java))
+                    it.addComponent<RemoveComponent>(engine)
                 }
             }
         }

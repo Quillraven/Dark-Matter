@@ -28,6 +28,7 @@ import ktx.actors.onChangeEvent
 import ktx.actors.onClick
 import ktx.actors.plusAssign
 import ktx.ashley.get
+import ktx.ashley.getSystem
 import ktx.log.logger
 import ktx.math.vec2
 import kotlin.math.min
@@ -52,7 +53,7 @@ class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener 
             }
         }
     }
-    private val renderSystem = game.engine.getSystem(RenderSystem::class.java)
+    private val renderSystem = game.engine.getSystem<RenderSystem>()
 
     override fun show() {
         super.show()
@@ -71,7 +72,7 @@ class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener 
             createDarkMatter()
 
             // remove any power ups and reset the spawn timer
-            getSystem(PowerUpSystem::class.java).reset()
+            getSystem<PowerUpSystem>().reset()
         }
         setupUI()
     }

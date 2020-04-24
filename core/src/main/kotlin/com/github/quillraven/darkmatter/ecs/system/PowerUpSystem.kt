@@ -19,6 +19,7 @@ import com.github.quillraven.darkmatter.ecs.component.TransformComponent
 import com.github.quillraven.darkmatter.event.GameEventManager
 import com.github.quillraven.darkmatter.event.GameEventPowerUp
 import com.github.quillraven.darkmatter.event.GameEventType
+import ktx.ashley.addComponent
 import ktx.ashley.allOf
 import ktx.ashley.entity
 import ktx.ashley.exclude
@@ -116,7 +117,7 @@ class PowerUpSystem(
         require(transform != null) { "Entity |entity| must have a TransformComponent. entity=$entity" }
 
         if (transform.position.y <= 1f) {
-            entity.add(engine.createComponent(RemoveComponent::class.java))
+            entity.addComponent<RemoveComponent>(engine)
             return
         }
 
@@ -165,7 +166,7 @@ class PowerUpSystem(
                 }
                 else -> LOG.error { "Unsupported power of type ${powerUpCmp.type}" }
             }
-            powerUp.add(engine.createComponent(RemoveComponent::class.java))
+            powerUp.addComponent<RemoveComponent>(engine)
 
             gameEventManager.dispatchEvent(GameEventType.POWER_UP, GameEventPowerUp.apply {
                 this.player = player
@@ -177,7 +178,7 @@ class PowerUpSystem(
     fun reset() {
         spawnTime = 0f
         entities.forEach {
-            it.add(engine.createComponent(RemoveComponent::class.java))
+            it.addComponent<RemoveComponent>(engine)
         }
     }
 }
