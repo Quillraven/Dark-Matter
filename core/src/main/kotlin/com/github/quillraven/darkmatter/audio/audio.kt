@@ -14,11 +14,12 @@ private val LOG = logger<AudioService>()
 private const val MAX_SOUND_INSTANCES = 16
 
 interface AudioService {
+    var enabled: Boolean
     fun play(soundAsset: SoundAsset, volume: Float = 1f) = Unit
     fun play(musicAsset: MusicAsset, volume: Float = 1f, loop: Boolean = true) = Unit
-    fun pause()
-    fun resume()
-    fun stop()
+    fun pause() = Unit
+    fun resume() = Unit
+    fun stop(clearSounds: Boolean = true) = Unit
     fun update() = Unit
 }
 
@@ -36,12 +37,22 @@ private class SoundRequestPool : Pool<SoundRequest>() {
 }
 
 class DefaultAudioService(private val assets: AssetStorage) : AudioService {
+    override var enabled = true
+        set(value) {
+            when (value) {
+                true -> currentMusic?.play()
+                false -> currentMusic?.pause()
+            }
+            field = value
+        }
     private val soundCache = EnumMap<SoundAsset, Sound>(SoundAsset::class.java)
     private val soundRequestPool = SoundRequestPool()
     private val soundRequests = EnumMap<SoundAsset, SoundRequest>(SoundAsset::class.java)
     private var currentMusic: Music? = null
 
     override fun play(soundAsset: SoundAsset, volume: Float) {
+        if (!enabled) return
+
         when {
             soundAsset in soundRequests -> {
                 // same request multiple times in one frame -> set volume to maximum of both requests
@@ -77,6 +88,8 @@ class DefaultAudioService(private val assets: AssetStorage) : AudioService {
     }
 
     override fun play(musicAsset: MusicAsset, volume: Float, loop: Boolean) {
+        if (!enabled) return
+
         if (currentMusic != null) {
             currentMusic?.stop()
         }
@@ -110,11 +123,16 @@ class DefaultAudioService(private val assets: AssetStorage) : AudioService {
     }
 
     override fun resume() {
+        if (!enabled) return
+
         currentMusic?.play()
     }
 
-    override fun stop() {
+    override fun stop(clearSounds: Boolean) {
         currentMusic?.stop()
+        if (clearSounds) {
+            soundRequests.clear()
+        }
     }
 }
 
