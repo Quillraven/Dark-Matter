@@ -6,7 +6,6 @@ import com.github.quillraven.darkmatter.Game
 import com.github.quillraven.darkmatter.asset.I18NBundleAsset
 import com.github.quillraven.darkmatter.asset.MusicAsset
 import com.github.quillraven.darkmatter.asset.SoundAsset.SPAWN
-import com.github.quillraven.darkmatter.asset.TextureAtlasAsset
 import com.github.quillraven.darkmatter.ecs.PLAYER_START_SPEED
 import com.github.quillraven.darkmatter.ecs.component.MAX_LIFE
 import com.github.quillraven.darkmatter.ecs.component.MAX_SHIELD
@@ -31,18 +30,12 @@ import ktx.actors.plusAssign
 import ktx.ashley.get
 import ktx.ashley.getSystem
 import ktx.log.logger
-import ktx.math.vec2
 import kotlin.math.min
 
 private val LOG = logger<GameScreen>()
 private const val MAX_DELTA_TIME = 1 / 30f
 
 class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener {
-    private val playerGraphicSize = vec2().apply {
-        val atlas = assets[TextureAtlasAsset.GRAPHICS.descriptor]
-        val playerGraphicRegion = atlas.findRegion("ship_base")
-        set(playerGraphicRegion.originalWidth.toFloat(), playerGraphicRegion.originalHeight.toFloat())
-    }
     private val ui = GameUI(assets[I18NBundleAsset.DEFAULT.descriptor]).apply {
         quitImageButton.onClick {
             game.setScreen<MenuScreen>()
@@ -67,7 +60,7 @@ class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener 
             addListener(GameEventType.PLAYER_BLOCK, this@GameScreen)
         }
         engine.run {
-            createPlayer(playerGraphicSize)
+            createPlayer(assets)
             audioService.play(SPAWN)
             gameEventManager.dispatchEvent(PLAYER_SPAWN)
             createDarkMatter()
