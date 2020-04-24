@@ -10,13 +10,18 @@ import ktx.style.SkinDsl
 import ktx.style.imageButton
 import ktx.style.label
 import ktx.style.skin
+import ktx.style.textButton
 
 enum class SkinLabel {
     LARGE, DEFAULT
 }
 
 enum class SkinImageButton {
-    PAUSE_PLAY, QUIT
+    PAUSE_PLAY, QUIT, SOUND_ON_OFF
+}
+
+enum class SkinTextButton {
+    DEFAULT
 }
 
 enum class SkinImage(val atlasKey: String) {
@@ -26,7 +31,10 @@ enum class SkinImage(val atlasKey: String) {
     SHIELD_BAR("shield_bar"),
     PLAY("play"),
     PAUSE("pause"),
-    QUIT("quit")
+    QUIT("quit"),
+    FRAME("frame"),
+    SOUND_ON("sound"),
+    SOUND_OFF("no_sound")
 }
 
 fun createSkin(assets: AssetStorage) {
@@ -36,6 +44,18 @@ fun createSkin(assets: AssetStorage) {
     Scene2DSkin.defaultSkin = skin(atlas) { skin ->
         createLabelStyles(bigFont, defaultFont)
         createImageButtonStyles(skin)
+        createTextButtonStyles(defaultFont, skin)
+    }
+}
+
+private fun @SkinDsl Skin.createTextButtonStyles(
+    defaultFont: BitmapFont,
+    skin: Skin
+) {
+    textButton(SkinTextButton.DEFAULT.name) {
+        font = defaultFont
+        up = skin.getDrawable(SkinImage.FRAME.atlasKey)
+        down = up
     }
 }
 
@@ -48,6 +68,11 @@ private fun @SkinDsl Skin.createImageButtonStyles(skin: Skin) {
     imageButton(SkinImageButton.QUIT.name) {
         imageDown = skin.getDrawable(SkinImage.QUIT.atlasKey)
         imageUp = imageDown
+    }
+    imageButton(SkinImageButton.SOUND_ON_OFF.name) {
+        imageUp = skin.getDrawable(SkinImage.SOUND_ON.atlasKey)
+        imageChecked = skin.getDrawable(SkinImage.SOUND_OFF.atlasKey)
+        imageDown = imageChecked
     }
 }
 
