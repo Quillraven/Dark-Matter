@@ -16,7 +16,6 @@ import com.github.quillraven.darkmatter.ui.SkinTextButton
 import ktx.actors.onChangeEvent
 import ktx.actors.onClick
 import ktx.ashley.getSystem
-import ktx.scene2d.KTableWidget
 import ktx.scene2d.Scene2dDsl
 import ktx.scene2d.StageWidget
 import ktx.scene2d.actors
@@ -51,53 +50,49 @@ class MenuScreen(game: Game) : Screen(game, MusicAsset.MENU) {
 
     private fun @Scene2dDsl StageWidget.createMenuUI() {
         table {
-            setupUI()
+            defaults().pad(MENU_DEFAULT_PADDING)
+
+            label(bundle["gameTitle"], SkinLabel.LARGE.name) {
+                wrap = true
+                setAlignment(Align.center)
+            }.cell(expandX = true, fillX = true, padTop = OFFSET_TITLE_Y, padBottom = MENU_ELEMENT_OFFSET_TITLE_Y)
+            row()
+
+            textButton(bundle["startGame"], SkinTextButton.DEFAULT.name) {
+                label.run {
+                    wrap = true
+                    setAlignment(Align.center)
+                }
+                onClick { game.setScreen<GameScreen>() }
+            }.cell(expandX = true, fillX = true)
+            row()
+
+            imageButton(SkinImageButton.SOUND_ON_OFF.name) {
+                this.isChecked = !audioService.enabled
+                onChangeEvent { _, actor -> audioService.enabled = !actor.isChecked }
+            }
+            row()
+
+            textButton("${highScoreText}0", SkinLabel.DEFAULT.name) {
+                label.run {
+                    wrap = true
+                    setAlignment(Align.center)
+                }
+            }.cell(expandX = true, fillX = true)
+            row()
+
+            textButton(bundle["quitGame"], SkinLabel.DEFAULT.name) {
+                label.run {
+                    wrap = true
+                    setAlignment(Align.center)
+                }
+                onClick { Gdx.app.exit() }
+            }.cell(expandX = true, fillX = true)
+
+            setFillParent(true)
+            top()
+            pack()
         }
-    }
-
-    private fun KTableWidget.setupUI() {
-        defaults().pad(MENU_DEFAULT_PADDING)
-
-        label(bundle["gameTitle"], SkinLabel.LARGE.name) {
-            wrap = true
-            setAlignment(Align.center)
-        }.cell(expandX = true, fillX = true, padTop = OFFSET_TITLE_Y, padBottom = MENU_ELEMENT_OFFSET_TITLE_Y)
-        row()
-
-        textButton(bundle["startGame"], SkinTextButton.DEFAULT.name) {
-            label.run {
-                wrap = true
-                setAlignment(Align.center)
-            }
-            onClick { game.setScreen<GameScreen>() }
-        }.cell(expandX = true, fillX = true)
-        row()
-
-        imageButton(SkinImageButton.SOUND_ON_OFF.name) {
-            this.isChecked = !audioService.enabled
-            onChangeEvent { _, actor -> audioService.enabled = !actor.isChecked }
-        }
-        row()
-
-        textButton("${highScoreText}0", SkinLabel.DEFAULT.name) {
-            label.run {
-                wrap = true
-                setAlignment(Align.center)
-            }
-        }.cell(expandX = true, fillX = true)
-        row()
-
-        textButton(bundle["quitGame"], SkinLabel.DEFAULT.name) {
-            label.run {
-                wrap = true
-                setAlignment(Align.center)
-            }
-            onClick { Gdx.app.exit() }
-        }.cell(expandX = true, fillX = true)
-
-        setFillParent(true)
-        top()
-        pack()
     }
 
     override fun hide() {
