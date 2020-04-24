@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.utils.Array
 import com.github.quillraven.darkmatter.V_WIDTH
 import com.github.quillraven.darkmatter.asset.SoundAsset
 import com.github.quillraven.darkmatter.audio.AudioService
@@ -24,6 +23,7 @@ import ktx.ashley.allOf
 import ktx.ashley.entity
 import ktx.ashley.exclude
 import ktx.ashley.get
+import ktx.collections.GdxArray
 import ktx.collections.gdxArrayOf
 import ktx.log.logger
 import kotlin.math.min
@@ -43,7 +43,7 @@ private class SpawnPattern(
     type3: PowerUpType = PowerUpType.NONE,
     type4: PowerUpType = PowerUpType.NONE,
     type5: PowerUpType = PowerUpType.NONE,
-    val types: Array<PowerUpType> = gdxArrayOf(type1, type2, type3, type4, type5)
+    val types: GdxArray<PowerUpType> = gdxArrayOf(type1, type2, type3, type4, type5)
 )
 
 class PowerUpSystem(
@@ -70,7 +70,7 @@ class PowerUpSystem(
             type5 = PowerUpType.SPEED_2
         )
     )
-    private val currentSpawnPattern = Array<PowerUpType>(spawnPatterns.size)
+    private val currentSpawnPattern = GdxArray<PowerUpType>(spawnPatterns.size)
 
     override fun update(deltaTime: Float) {
         super.update(deltaTime)

@@ -5,12 +5,12 @@ import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Pool
 import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventListener
 import com.github.quillraven.darkmatter.event.GameEventManager
 import com.github.quillraven.darkmatter.event.GameEventType
+import ktx.collections.GdxArray
 import ktx.math.vec3
 
 private const val MAX_SHAKE_INSTANCES = 4
@@ -74,7 +74,7 @@ class CameraShakeSystem(
     private val gameEventManager: GameEventManager
 ) : EntitySystem(), GameEventListener {
     private val shakePool = CameraShakePool(camera)
-    private val activeShakes = Array<CameraShake>(MAX_SHAKE_INSTANCES)
+    private val activeShakes = GdxArray<CameraShake>(MAX_SHAKE_INSTANCES)
 
     override fun addedToEngine(engine: Engine?) {
         super.addedToEngine(engine)

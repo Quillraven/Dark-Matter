@@ -1,8 +1,8 @@
 package com.github.quillraven.darkmatter.event
 
 import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.utils.Array
 import com.github.quillraven.darkmatter.ecs.component.PowerUpType
+import ktx.collections.GdxArray
 import ktx.log.logger
 import java.util.*
 
@@ -60,12 +60,12 @@ interface GameEventListener {
 }
 
 class GameEventManager {
-    private val listeners = EnumMap<GameEventType, Array<GameEventListener>>(GameEventType::class.java)
+    private val listeners = EnumMap<GameEventType, GdxArray<GameEventListener>>(GameEventType::class.java)
 
     fun addListener(type: GameEventType, listener: GameEventListener) {
         var eventListeners = listeners[type]
         if (eventListeners == null) {
-            eventListeners = Array(INITIAL_LISTENER_CAPACITY)
+            eventListeners = GdxArray(INITIAL_LISTENER_CAPACITY)
             listeners[type] = eventListeners
         }
 
