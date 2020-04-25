@@ -10,6 +10,7 @@ import com.github.quillraven.darkmatter.ecs.system.PlayerAnimationSystem
 import com.github.quillraven.darkmatter.ecs.system.PowerUpSystem
 import com.github.quillraven.darkmatter.ui.ConfirmDialog
 import com.github.quillraven.darkmatter.ui.MenuUI
+import com.github.quillraven.darkmatter.ui.TextDialog
 import ktx.actors.onChangeEvent
 import ktx.actors.onClick
 import ktx.actors.plusAssign
@@ -21,6 +22,12 @@ class MenuScreen(game: Game) : Screen(game, MusicAsset.MENU) {
     private val ui = MenuUI(bundle).apply {
         startGameButton.onClick { game.setScreen<GameScreen>() }
         soundButton.onChangeEvent { _, actor -> audioService.enabled = !actor.isChecked }
+        controlButton.onClick {
+            controlsDialog.show(stage)
+        }
+        creditsButton.onClick {
+            creditsDialog.show(stage)
+        }
         quitGameButton.onClick {
             confirmDialog.show(stage)
         }
@@ -29,6 +36,8 @@ class MenuScreen(game: Game) : Screen(game, MusicAsset.MENU) {
         yesButton.onClick { Gdx.app.exit() }
         noButton.onClick { hide() }
     }
+    private val creditsDialog = TextDialog(bundle, "credits")
+    private val controlsDialog = TextDialog(bundle, "controls")
 
     override fun show() {
         super.show()
