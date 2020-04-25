@@ -35,6 +35,7 @@ import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
 import ktx.collections.gdxListOf
+import ktx.log.debug
 import ktx.log.logger
 
 private val LOG = logger<Game>()

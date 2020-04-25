@@ -17,6 +17,7 @@ import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
 import com.github.quillraven.darkmatter.ecs.system.DAMAGE_AREA_HEIGHT
 import ktx.ashley.entity
+import ktx.ashley.with
 import ktx.assets.async.AssetStorage
 
 private const val SHIP_FIRE_OFFSET_X = 1f // in pixels

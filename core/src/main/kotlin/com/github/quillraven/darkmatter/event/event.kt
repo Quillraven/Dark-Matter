@@ -3,6 +3,8 @@ package com.github.quillraven.darkmatter.event
 import com.badlogic.ashley.core.Entity
 import com.github.quillraven.darkmatter.ecs.component.PowerUpType
 import ktx.collections.GdxArray
+import ktx.log.debug
+import ktx.log.error
 import ktx.log.logger
 import java.util.*
 

@@ -12,6 +12,8 @@ import com.github.quillraven.darkmatter.ecs.component.AnimationType
 import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
 import ktx.ashley.allOf
 import ktx.ashley.get
+import ktx.log.debug
+import ktx.log.error
 import ktx.log.logger
 import java.util.*
 

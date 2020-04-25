@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
+import ktx.log.debug
 import ktx.log.logger
 import java.lang.System.currentTimeMillis
 

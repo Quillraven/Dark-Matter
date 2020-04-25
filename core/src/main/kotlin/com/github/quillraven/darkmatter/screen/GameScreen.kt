@@ -29,6 +29,7 @@ import ktx.actors.onClick
 import ktx.actors.plusAssign
 import ktx.ashley.get
 import ktx.ashley.getSystem
+import ktx.log.debug
 import ktx.log.logger
 import kotlin.math.min
 
