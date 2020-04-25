@@ -15,18 +15,20 @@ import ktx.scene2d.textButton
 
 private const val OFFSET_TITLE_Y = 15f
 private const val MENU_ELEMENT_OFFSET_TITLE_Y = 20f
-private const val MENU_DEFAULT_PADDING = 5f
+private const val MENU_DEFAULT_PADDING = 2.5f
 
 class MenuUI(bundle: I18NBundle) {
     val table: KTableWidget
-    lateinit var startGameButton: TextButton
-    lateinit var soundButton: ImageButton
-    lateinit var highScoreButton: TextButton
-    lateinit var quitGameButton: TextButton
+    val startGameButton: TextButton
+    val soundButton: ImageButton
+    val controlButton: TextButton
+    val highScoreButton: TextButton
+    val creditsButton: TextButton
+    val quitGameButton: TextButton
 
     init {
         table = scene2d.table {
-            defaults().pad(MENU_DEFAULT_PADDING).expandX().fillX()
+            defaults().pad(MENU_DEFAULT_PADDING).expandX().fillX().colspan(2)
 
             label(bundle["gameTitle"], SkinLabel.LARGE.name) { cell ->
                 wrap = true
@@ -43,10 +45,19 @@ class MenuUI(bundle: I18NBundle) {
             }
             row()
 
-            soundButton = imageButton(SkinImageButton.SOUND_ON_OFF.name)
+            soundButton = imageButton(SkinImageButton.SOUND_ON_OFF.name).cell(colspan = 1, expandX = false)
+            controlButton = textButton(bundle["control"], SkinTextButton.DEFAULT.name) { cell ->
+                label.wrap = true
+                cell.colspan(1)
+            }
             row()
 
             highScoreButton = textButton(bundle["highscore", 0], SkinLabel.DEFAULT.name) {
+                label.wrap = true
+            }
+            row()
+
+            creditsButton = textButton(bundle["credit"], SkinLabel.DEFAULT.name) {
                 label.wrap = true
             }
             row()
