@@ -9,4 +9,4 @@ A [LibGDX](http://libgdx.badlogicgames.com/) project generated with [gdx-liftoff
 - Martdreson: [Particle Pack](https://martdreson.itch.io/particle-pack)
 - Ansimuz: [Explosion Animation Pack](https://ansimuz.itch.io/explosion-animations-pack)
 - Jonathan So: [Music](https://jonathan-so.itch.io/creatorpack)
-- czybzy: help during development
+- czybzy: help during development ([github profile](https://github.com/czyzby))
