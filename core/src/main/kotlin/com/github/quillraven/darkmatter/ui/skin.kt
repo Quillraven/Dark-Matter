@@ -11,6 +11,7 @@ import ktx.style.imageButton
 import ktx.style.label
 import ktx.style.skin
 import ktx.style.textButton
+import ktx.style.window
 
 enum class SkinLabel {
     LARGE, DEFAULT
@@ -21,6 +22,10 @@ enum class SkinImageButton {
 }
 
 enum class SkinTextButton {
+    DEFAULT
+}
+
+enum class SkinWindow {
     DEFAULT
 }
 
@@ -45,6 +50,17 @@ fun createSkin(assets: AssetStorage) {
         createLabelStyles(bigFont, defaultFont)
         createImageButtonStyles(skin)
         createTextButtonStyles(defaultFont, skin)
+        createWindowStyles(skin, defaultFont)
+    }
+}
+
+private fun @SkinDsl Skin.createWindowStyles(
+    skin: Skin,
+    defaultFont: BitmapFont
+) {
+    window(SkinWindow.DEFAULT.name) {
+        background = skin.getDrawable(SkinImage.FRAME.atlasKey)
+        titleFont = defaultFont
     }
 }
 
