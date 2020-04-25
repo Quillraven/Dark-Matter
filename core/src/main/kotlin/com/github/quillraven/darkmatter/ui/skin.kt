@@ -6,9 +6,9 @@ import com.github.quillraven.darkmatter.asset.BitmapFontAsset
 import com.github.quillraven.darkmatter.asset.TextureAtlasAsset
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.Scene2DSkin
-import ktx.style.SkinDsl
 import ktx.style.imageButton
 import ktx.style.label
+import ktx.style.scrollPane
 import ktx.style.skin
 import ktx.style.textButton
 import ktx.style.window
@@ -29,6 +29,10 @@ enum class SkinWindow {
     DEFAULT
 }
 
+enum class SkinScrollPane {
+    DEFAULT
+}
+
 enum class SkinImage(val atlasKey: String) {
     GAME_HUD("game_hud"),
     WARNING("warning"),
@@ -39,7 +43,9 @@ enum class SkinImage(val atlasKey: String) {
     QUIT("quit"),
     FRAME("frame"),
     SOUND_ON("sound"),
-    SOUND_OFF("no_sound")
+    SOUND_OFF("no_sound"),
+    SCROLL_V("scroll_v"),
+    SCROLL_KNOB("scroll_knob")
 }
 
 fun createSkin(assets: AssetStorage) {
@@ -51,10 +57,18 @@ fun createSkin(assets: AssetStorage) {
         createImageButtonStyles(skin)
         createTextButtonStyles(defaultFont, skin)
         createWindowStyles(skin, defaultFont)
+        createScrollPaneStyles(skin)
     }
 }
 
-private fun @SkinDsl Skin.createWindowStyles(
+private fun Skin.createScrollPaneStyles(skin: Skin) {
+    scrollPane(SkinScrollPane.DEFAULT.name) {
+        vScroll = skin.getDrawable(SkinImage.SCROLL_V.atlasKey)
+        vScrollKnob = skin.getDrawable(SkinImage.SCROLL_KNOB.atlasKey)
+    }
+}
+
+private fun Skin.createWindowStyles(
     skin: Skin,
     defaultFont: BitmapFont
 ) {
@@ -64,7 +78,7 @@ private fun @SkinDsl Skin.createWindowStyles(
     }
 }
 
-private fun @SkinDsl Skin.createTextButtonStyles(
+private fun Skin.createTextButtonStyles(
     defaultFont: BitmapFont,
     skin: Skin
 ) {
@@ -75,7 +89,7 @@ private fun @SkinDsl Skin.createTextButtonStyles(
     }
 }
 
-private fun @SkinDsl Skin.createImageButtonStyles(skin: Skin) {
+private fun Skin.createImageButtonStyles(skin: Skin) {
     imageButton(SkinImageButton.PAUSE_PLAY.name) {
         imageUp = skin.getDrawable(SkinImage.PAUSE.atlasKey)
         imageChecked = skin.getDrawable(SkinImage.PLAY.atlasKey)
@@ -92,7 +106,7 @@ private fun @SkinDsl Skin.createImageButtonStyles(skin: Skin) {
     }
 }
 
-private fun @SkinDsl Skin.createLabelStyles(
+private fun Skin.createLabelStyles(
     bigFont: BitmapFont,
     defaultFont: BitmapFont
 ) {
