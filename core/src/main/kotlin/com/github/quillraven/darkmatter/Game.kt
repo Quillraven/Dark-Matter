@@ -103,7 +103,7 @@ class Game : KtxGame<KtxScreen>() {
     private val profiler by lazy { GLProfiler(Gdx.graphics) }
 
     override fun create() {
-        Gdx.app.logLevel = Application.LOG_DEBUG
+        Gdx.app.logLevel = Application.LOG_ERROR
         profiler.enable()
 
         // load skin and go to LoadingScreen for remaining asset loading

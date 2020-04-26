@@ -30,6 +30,10 @@ class DebugSystem(
     private val gameEventManager: GameEventManager,
     private val audioService: AudioService
 ) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), WINDOW_INFO_UPDATE_INTERVAL) {
+    init {
+        setProcessing(false)
+    }
+
     override fun processEntity(entity: Entity) {
         entity[PlayerComponent.mapper]?.let { player ->
             entity[TransformComponent.mapper]?.let { transform ->
