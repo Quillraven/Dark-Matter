@@ -90,8 +90,6 @@ class DefaultAudioService(private val assets: AssetStorage) : AudioService {
     }
 
     override fun play(musicAsset: MusicAsset, volume: Float, loop: Boolean) {
-        if (!enabled) return
-
         if (currentMusic != null) {
             currentMusic?.stop()
         }
@@ -101,7 +99,10 @@ class DefaultAudioService(private val assets: AssetStorage) : AudioService {
             return
         }
 
-        currentMusic = assets[musicAsset.descriptor].apply {
+        currentMusic = assets[musicAsset.descriptor]
+        if (!enabled) return
+
+        currentMusic?.apply {
             this.volume = volume
             this.isLooping = loop
             play()
