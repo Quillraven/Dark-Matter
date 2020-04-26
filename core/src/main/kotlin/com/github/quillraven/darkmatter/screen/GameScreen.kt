@@ -14,6 +14,8 @@ import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
 import com.github.quillraven.darkmatter.ecs.component.PowerUpType
 import com.github.quillraven.darkmatter.ecs.createDarkMatter
 import com.github.quillraven.darkmatter.ecs.createPlayer
+import com.github.quillraven.darkmatter.ecs.system.MoveSystem
+import com.github.quillraven.darkmatter.ecs.system.PlayerAnimationSystem
 import com.github.quillraven.darkmatter.ecs.system.PowerUpSystem
 import com.github.quillraven.darkmatter.ecs.system.RenderSystem
 import com.github.quillraven.darkmatter.event.GameEvent
@@ -68,15 +70,28 @@ class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener 
             addListener(GameEventType.PLAYER_BLOCK, this@GameScreen)
         }
         engine.run {
+            // remove any power ups and reset the spawn timer
+            getSystem<PowerUpSystem>().run {
+                setProcessing(true)
+                reset()
+            }
+            getSystem<MoveSystem>().setProcessing(true)
+            getSystem<PlayerAnimationSystem>().setProcessing(true)
             createPlayer(assets)
             audioService.play(SPAWN)
             gameEventManager.dispatchEvent(PLAYER_SPAWN)
             createDarkMatter()
-
-            // remove any power ups and reset the spawn timer
-            getSystem<PowerUpSystem>().reset()
         }
         setupUI()
+    }
+
+    override fun hide() {
+        super.hide()
+        engine.run {
+            getSystem<PowerUpSystem>().setProcessing(false)
+            getSystem<MoveSystem>().setProcessing(false)
+            getSystem<PlayerAnimationSystem>().setProcessing(false)
+        }
     }
 
     private fun setupUI() {
@@ -129,14 +144,7 @@ class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener 
                 ui.updateDistance(0f)
             }
             GameEventType.PLAYER_DEATH -> {
-                val distance = (data as GameEventPlayerDeath).distance.roundToInt()
-                LOG.debug { "Player died with a distance of $distance" }
-                if (distance > preferences[PREFERENCE_HIGHSCORE_KEY, 0]) {
-                    preferences.flush {
-                        this[PREFERENCE_HIGHSCORE_KEY] = distance
-                    }
-                }
-                game.setScreen<GameOverScreen>()
+                onPlayerDeath(data)
             }
             GameEventType.PLAYER_MOVE -> {
                 ui.run {
@@ -151,20 +159,39 @@ class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener 
                 }
             }
             GameEventType.POWER_UP -> {
-                val eventData = data as GameEventPowerUp
-                data.player[PlayerComponent.mapper]?.let { player ->
-                    when (eventData.type) {
-                        PowerUpType.LIFE -> ui.updateLife(player.life, player.maxLife)
-                        PowerUpType.SHIELD -> ui.updateShield(player.shield, player.maxShield)
-                        else -> {
-                            // ignore
-                        }
-                    }
-                }
+                onPlayerPowerUp(data)
             }
             GameEventType.PLAYER_BLOCK -> {
                 ui.updateShield((data as GameEventPlayerBlock).shield, data.maxShield)
             }
         }
+    }
+
+    private fun onPlayerPowerUp(data: GameEvent?) {
+        val eventData = data as GameEventPowerUp
+        data.player[PlayerComponent.mapper]?.let { player ->
+            when (eventData.type) {
+                PowerUpType.LIFE -> ui.updateLife(player.life, player.maxLife)
+                PowerUpType.SHIELD -> ui.updateShield(player.shield, player.maxShield)
+                else -> {
+                    // ignore
+                }
+            }
+        }
+    }
+
+    private fun onPlayerDeath(data: GameEvent?) {
+        val distance = (data as GameEventPlayerDeath).distance.roundToInt()
+        LOG.debug { "Player died with a distance of $distance" }
+        if (distance > preferences[PREFERENCE_HIGHSCORE_KEY, 0]) {
+            preferences.flush {
+                this[PREFERENCE_HIGHSCORE_KEY] = distance
+            }
+        }
+        game.getScreen<GameOverScreen>().run {
+            score = distance
+            highScore = preferences[PREFERENCE_HIGHSCORE_KEY, 0]
+        }
+        game.setScreen<GameOverScreen>()
     }
 }
