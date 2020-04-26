@@ -22,7 +22,7 @@ enum class SkinImageButton {
 }
 
 enum class SkinTextButton {
-    DEFAULT
+    DEFAULT, TRANSPARENT
 }
 
 enum class SkinWindow {
@@ -42,6 +42,7 @@ enum class SkinImage(val atlasKey: String) {
     PAUSE("pause"),
     QUIT("quit"),
     FRAME("frame"),
+    FRAME_TRANSPARENT("frame_transparent"),
     SOUND_ON("sound"),
     SOUND_OFF("no_sound"),
     SCROLL_V("scroll_v"),
@@ -85,6 +86,11 @@ private fun Skin.createTextButtonStyles(
     textButton(SkinTextButton.DEFAULT.name) {
         font = defaultFont
         up = skin.getDrawable(SkinImage.FRAME.atlasKey)
+        down = up
+    }
+    textButton(SkinTextButton.TRANSPARENT.name) {
+        font = defaultFont
+        up = skin.getDrawable(SkinImage.FRAME_TRANSPARENT.atlasKey)
         down = up
     }
 }
