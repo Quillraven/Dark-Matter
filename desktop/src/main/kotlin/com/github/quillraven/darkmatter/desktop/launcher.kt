@@ -1,4 +1,4 @@
-package com.github.quillraven.darkmatter.lwjgl3.com.github.quillraven.darkmatter.desktop
+package com.github.quillraven.darkmatter.desktop
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
@@ -11,6 +11,6 @@ fun main() {
             setTitle("Dark Matter")
             setWindowSizeLimits(360, 640, -1, -1)
             setWindowedMode(360, 640)
-            setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png")
+            setWindowIcon("icon.png")
         })
 }
