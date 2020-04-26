@@ -3,6 +3,7 @@ package com.github.quillraven.darkmatter.screen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.github.quillraven.darkmatter.Game
+import com.github.quillraven.darkmatter.PREFERENCE_HIGHSCORE_KEY
 import com.github.quillraven.darkmatter.asset.I18NBundleAsset
 import com.github.quillraven.darkmatter.asset.MusicAsset
 import com.github.quillraven.darkmatter.asset.SoundAsset.SPAWN
@@ -18,6 +19,7 @@ import com.github.quillraven.darkmatter.ecs.system.RenderSystem
 import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventListener
 import com.github.quillraven.darkmatter.event.GameEventPlayerBlock
+import com.github.quillraven.darkmatter.event.GameEventPlayerDeath
 import com.github.quillraven.darkmatter.event.GameEventPlayerHit
 import com.github.quillraven.darkmatter.event.GameEventPlayerMove
 import com.github.quillraven.darkmatter.event.GameEventPowerUp
@@ -31,7 +33,11 @@ import ktx.ashley.get
 import ktx.ashley.getSystem
 import ktx.log.debug
 import ktx.log.logger
+import ktx.preferences.flush
+import ktx.preferences.get
+import ktx.preferences.set
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 private val LOG = logger<GameScreen>()
 private const val MAX_DELTA_TIME = 1 / 30f
@@ -49,6 +55,7 @@ class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener 
         }
     }
     private val renderSystem = game.engine.getSystem<RenderSystem>()
+    private val preferences = game.preferences
 
     override fun show() {
         super.show()
@@ -122,7 +129,13 @@ class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener 
                 ui.updateDistance(0f)
             }
             GameEventType.PLAYER_DEATH -> {
-                LOG.debug { "Player died with a distance of $data" }
+                val distance = (data as GameEventPlayerDeath).distance.roundToInt()
+                LOG.debug { "Player died with a distance of $distance" }
+                if (distance > preferences[PREFERENCE_HIGHSCORE_KEY, 0]) {
+                    preferences.flush {
+                        this[PREFERENCE_HIGHSCORE_KEY] = distance
+                    }
+                }
                 game.setScreen<GameOverScreen>()
             }
             GameEventType.PLAYER_MOVE -> {
