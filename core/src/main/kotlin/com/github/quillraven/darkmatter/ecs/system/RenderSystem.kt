@@ -25,6 +25,7 @@ import ktx.ashley.allOf
 import ktx.ashley.exclude
 import ktx.ashley.get
 import ktx.graphics.use
+import ktx.log.error
 import ktx.log.logger
 import ktx.math.component1
 import ktx.math.component2

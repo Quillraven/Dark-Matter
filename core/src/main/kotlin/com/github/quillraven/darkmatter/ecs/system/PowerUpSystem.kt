@@ -23,8 +23,11 @@ import ktx.ashley.allOf
 import ktx.ashley.entity
 import ktx.ashley.exclude
 import ktx.ashley.get
+import ktx.ashley.with
 import ktx.collections.GdxArray
 import ktx.collections.gdxArrayOf
+import ktx.log.debug
+import ktx.log.error
 import ktx.log.logger
 import kotlin.math.min
 

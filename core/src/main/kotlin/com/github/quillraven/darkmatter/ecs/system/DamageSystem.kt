@@ -19,6 +19,7 @@ import ktx.ashley.allOf
 import ktx.ashley.entity
 import ktx.ashley.exclude
 import ktx.ashley.get
+import ktx.ashley.with
 import kotlin.math.max
 
 const val DAMAGE_AREA_HEIGHT = 2f
