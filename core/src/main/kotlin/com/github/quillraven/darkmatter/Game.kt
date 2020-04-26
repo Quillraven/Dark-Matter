@@ -3,6 +3,7 @@ package com.github.quillraven.darkmatter
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.graphics.profiling.GLProfiler
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
@@ -44,6 +45,8 @@ const val V_HEIGHT_PIXELS = 240
 const val V_WIDTH = 9
 const val V_HEIGHT = 16
 const val UNIT_SCALE = 1 / 8f
+const val PREFERENCE_MUSIC_ENABLED_KEY = "musicEnabled"
+const val PREFERENCE_HIGHSCORE_KEY = "highScore"
 
 class Game : KtxGame<KtxScreen>() {
     val gameViewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
@@ -90,6 +93,7 @@ class Game : KtxGame<KtxScreen>() {
             addSystem(RemoveSystem(gameEventManager))
         }
     }
+    val preferences: Preferences by lazy { Gdx.app.getPreferences("dark-matter") }
     private val profiler by lazy { GLProfiler(Gdx.graphics) }
 
     override fun create() {
