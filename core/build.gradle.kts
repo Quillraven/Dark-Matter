@@ -17,6 +17,7 @@ dependencies {
     implementation("io.github.libktx:ktx-graphics:${Versions.ktx}")
     implementation("io.github.libktx:ktx-i18n:${Versions.ktx}")
     implementation("io.github.libktx:ktx-log:${Versions.ktx}")
+    implementation("io.github.libktx:ktx-preferences:${Versions.ktx}")
     implementation("io.github.libktx:ktx-scene2d:${Versions.ktx}")
     implementation("io.github.libktx:ktx-style:${Versions.ktx}")
 }
