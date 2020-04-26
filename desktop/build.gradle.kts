@@ -27,6 +27,6 @@ tasks.register<Jar>("dist") {
     from(assetsDir)
 
     manifest {
-        attributes["Main-Class"] = "com.github.quillraven.darkmatter.desktop.launcherKt"
+        attributes["Main-Class"] = "com.github.quillraven.darkmatter.desktop.LauncherKt"
     }
 }
