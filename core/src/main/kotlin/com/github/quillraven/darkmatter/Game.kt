@@ -66,16 +66,22 @@ class Game : KtxGame<KtxScreen>() {
             val atlas = assets[TextureAtlasAsset.GRAPHICS.descriptor]
 
             addSystem(DebugSystem(gameEventManager, audioService))
-            addSystem(PowerUpSystem(gameEventManager, audioService))
+            addSystem(PowerUpSystem(gameEventManager, audioService).apply {
+                setProcessing(false)
+            })
             addSystem(PlayerInputSystem(gameViewport))
-            addSystem(MoveSystem(gameEventManager))
+            addSystem(MoveSystem(gameEventManager).apply {
+                setProcessing(false)
+            })
             addSystem(DamageSystem(gameEventManager, audioService))
             addSystem(
                 PlayerAnimationSystem(
                     atlas.findRegion("ship_base"),
                     atlas.findRegion("ship_left"),
                     atlas.findRegion("ship_right")
-                )
+                ).apply {
+                    setProcessing(false)
+                }
             )
             addSystem(AttachSystem())
             addSystem(AnimationSystem(atlas))

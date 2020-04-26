@@ -53,15 +53,10 @@ class MenuScreen(game: Game) : Screen(game, MusicAsset.MENU) {
     override fun show() {
         super.show()
         engine.run {
-            getSystem<PowerUpSystem>().setProcessing(false)
-            getSystem<MoveSystem>().setProcessing(false)
-            getSystem<PlayerAnimationSystem>().setProcessing(false)
             createPlayer(assets, spawnY = PLAYER_SPAWN_Y)
             createDarkMatter()
         }
-
         audioService.enabled = preferences[PREFERENCE_MUSIC_ENABLED_KEY, true]
-
         setupUI()
     }
 
@@ -69,7 +64,7 @@ class MenuScreen(game: Game) : Screen(game, MusicAsset.MENU) {
         ui.run {
             soundButton.isChecked = !audioService.enabled
             updateHighScore(preferences[PREFERENCE_HIGHSCORE_KEY, 0])
-            stage += ui.table
+            stage += this.table
         }
     }
 
