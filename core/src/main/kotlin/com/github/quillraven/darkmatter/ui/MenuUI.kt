@@ -1,5 +1,6 @@
 package com.github.quillraven.darkmatter.ui
 
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
@@ -16,13 +17,14 @@ import ktx.scene2d.textButton
 private const val OFFSET_TITLE_Y = 15f
 private const val MENU_ELEMENT_OFFSET_TITLE_Y = 20f
 private const val MENU_DEFAULT_PADDING = 2.5f
+private const val MAX_HIGHSCORE_DISPLAYED = 999
 
-class MenuUI(bundle: I18NBundle) {
+class MenuUI(private val bundle: I18NBundle) {
     val table: KTableWidget
     val startGameButton: TextButton
     val soundButton: ImageButton
     val controlButton: TextButton
-    val highScoreButton: TextButton
+    private val highScoreButton: TextButton
     val creditsButton: TextButton
     val quitGameButton: TextButton
 
@@ -69,6 +71,14 @@ class MenuUI(bundle: I18NBundle) {
             setFillParent(true)
             top()
             pack()
+        }
+    }
+
+    fun updateHighScore(highScore: Int) {
+        highScoreButton.label.run {
+            text.setLength(0)
+            text.append(bundle["highscore", MathUtils.clamp(highScore, 0, MAX_HIGHSCORE_DISPLAYED)])
+            invalidateHierarchy()
         }
     }
 }
