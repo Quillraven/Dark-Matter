@@ -81,9 +81,9 @@ class GameUI(bundle: I18NBundle) : Group() {
         this += pauseResumeButton
 
         // bottom game hud
-        var gameHudX = 0f
-        var gameHudHeight = 0f
-        var gameHudWidth = 0f
+        var gameHudX: Float
+        var gameHudHeight: Float
+        var gameHudWidth: Float
         this += scene2d.image(SkinImage.GAME_HUD.atlasKey) {
             gameHudX = V_WIDTH_PIXELS * 0.5f - width * 0.5f
             gameHudHeight = height
