@@ -34,7 +34,7 @@ import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
-import ktx.collections.gdxListOf
+import ktx.collections.gdxArrayOf
 import ktx.log.debug
 import ktx.log.logger
 
@@ -98,7 +98,7 @@ class Game : KtxGame<KtxScreen>() {
 
         // load skin and go to LoadingScreen for remaining asset loading
         var old = System.currentTimeMillis()
-        val assetRefs = gdxListOf(
+        val assetRefs = gdxArrayOf(
             TextureAtlasAsset.values().filter { it.isSkinAtlas }.map { assets.loadAsync(it.descriptor) },
             BitmapFontAsset.values().map { assets.loadAsync(it.descriptor) },
             I18NBundleAsset.values().map { assets.loadAsync(it.descriptor) }
