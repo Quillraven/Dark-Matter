@@ -1,4 +1,5 @@
 plugins {
+    application
     kotlin("jvm")
 }
 
@@ -14,19 +15,25 @@ java {
     targetCompatibility = Versions.java
 }
 
+application {
+    mainClassName = "com.github.quillraven.darkmatter.desktop.LauncherKt"
+}
+
 val assetsDir = rootProject.files("assets")
 sourceSets {
     main {
-        resources.srcDir(assetsDir)
+        resources.srcDirs += assetsDir
     }
 }
 
-tasks.register<Jar>("dist") {
-    from(files(sourceSets.main.get().output.classesDirs))
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    from(assetsDir)
+tasks {
+    named<Jar>("jar") {
+        from(files(sourceSets.main.get().output.classesDirs))
+        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+        from(assetsDir)
 
-    manifest {
-        attributes["Main-Class"] = "com.github.quillraven.darkmatter.desktop.LauncherKt"
+        manifest {
+            attributes["Main-Class"] = application.mainClassName
+        }
     }
 }
