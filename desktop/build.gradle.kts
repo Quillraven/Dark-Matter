@@ -22,7 +22,7 @@ application {
 val assetsDir = rootProject.files("assets")
 sourceSets {
     main {
-        resources.srcDirs += assetsDir
+        resources.srcDir(assetsDir)
     }
 }
 
