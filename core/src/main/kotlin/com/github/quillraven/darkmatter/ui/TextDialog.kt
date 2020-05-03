@@ -15,6 +15,7 @@ import ktx.scene2d.textButton
 private const val ELEMENT_PADDING = 7f
 private const val DIALOG_WIDTH_SCALE = 0.95f
 private const val DIALOG_HEIGHT_SCALE = 0.75f
+private const val SCROLL_PANE_PAD_RIGHT = -7f // align with background frame border
 
 class TextDialog(
     bundle: I18NBundle,
@@ -26,6 +27,7 @@ class TextDialog(
             labelCell.padLeft(ELEMENT_PADDING).padRight(ELEMENT_PADDING)
             onClick { hide() }
         })
+        buttonTable.pack()
 
         contentTable.defaults().fill().expand()
         contentTable.add(scene2d.scrollPane(SkinScrollPane.DEFAULT.name) {
@@ -37,8 +39,11 @@ class TextDialog(
                 wrap = true
                 setAlignment(Align.topLeft)
             }
-        }).padLeft(ELEMENT_PADDING).padTop(ELEMENT_PADDING)
+        }).padRight(SCROLL_PANE_PAD_RIGHT)
+        contentTable.pack()
 
+        // we don't scale or rotate the dialog -> set transform to false to
+        // avoid additional texture bindings and draw calls
         isTransform = false
     }
 

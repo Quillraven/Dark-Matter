@@ -100,15 +100,21 @@ private fun Skin.createImageButtonStyles(skin: Skin) {
         imageUp = skin.getDrawable(SkinImage.PAUSE.atlasKey)
         imageChecked = skin.getDrawable(SkinImage.PLAY.atlasKey)
         imageDown = imageChecked
+        up = skin.getDrawable(SkinImage.FRAME.atlasKey)
+        down = up
     }
     imageButton(SkinImageButton.QUIT.name) {
         imageDown = skin.getDrawable(SkinImage.QUIT.atlasKey)
         imageUp = imageDown
+        up = skin.getDrawable(SkinImage.FRAME.atlasKey)
+        down = up
     }
     imageButton(SkinImageButton.SOUND_ON_OFF.name) {
         imageUp = skin.getDrawable(SkinImage.SOUND_ON.atlasKey)
         imageChecked = skin.getDrawable(SkinImage.SOUND_OFF.atlasKey)
         imageDown = imageChecked
+        up = skin.getDrawable(SkinImage.FRAME.atlasKey)
+        down = up
     }
 }
 

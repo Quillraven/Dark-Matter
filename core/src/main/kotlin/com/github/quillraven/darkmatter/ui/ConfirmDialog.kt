@@ -11,7 +11,7 @@ import ktx.scene2d.scene2d
 import ktx.scene2d.textButton
 
 private const val ELEMENT_PADDING = 7f
-private const val DIALOG_WIDTH_SCALE = 0.75f
+private const val DIALOG_WIDTH_SCALE = 0.85f
 private const val DIALOG_HEIGHT_SCALE = 0.5f
 
 class ConfirmDialog(bundle: I18NBundle) : Dialog("", Scene2DSkin.defaultSkin, SkinWindow.DEFAULT.name) {
@@ -28,10 +28,13 @@ class ConfirmDialog(bundle: I18NBundle) : Dialog("", Scene2DSkin.defaultSkin, Sk
             wrap = true
             setAlignment(Align.center)
         })
+        contentTable.pack()
 
         buttonTable.defaults().padBottom(ELEMENT_PADDING)
         button(yesButton)
         button(noButton)
+        buttonTable.pack()
+
         // we don't scale or rotate the dialog -> set transform to false to
         // avoid additional texture bindings and draw calls
         isTransform = false
