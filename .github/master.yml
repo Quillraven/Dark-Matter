@@ -1,0 +1,31 @@
+name: master
+
+on:
+  push:
+    paths:
+      - 'core/**'
+    branches:
+      - master
+  pull_request:
+    paths:
+      - 'core/**'
+    branches:
+      - master
+
+jobs:
+  gradle:
+    runs-on: windows-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v1
+    
+      - name: setup JDK8 version
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+
+      - name: build
+        run: ./gradlew clean build
+
+      - name: detekt
+        run: ./gradlew detekt
