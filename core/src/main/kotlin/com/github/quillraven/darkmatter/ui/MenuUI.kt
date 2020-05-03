@@ -54,17 +54,17 @@ class MenuUI(private val bundle: I18NBundle) {
             }
             row()
 
-            highScoreButton = textButton(bundle["highscore", 0], SkinLabel.DEFAULT.name) {
+            highScoreButton = textButton(bundle["highscore", 0], SkinTextButton.LABEL.name) {
                 label.wrap = true
             }
             row()
 
-            creditsButton = textButton(bundle["credit"], SkinLabel.DEFAULT.name) {
+            creditsButton = textButton(bundle["credit"], SkinTextButton.DEFAULT.name) {
                 label.wrap = true
             }
             row()
 
-            quitGameButton = textButton(bundle["quitGame"], SkinLabel.DEFAULT.name) {
+            quitGameButton = textButton(bundle["quitGame"], SkinTextButton.DEFAULT.name) {
                 label.wrap = true
             }
 

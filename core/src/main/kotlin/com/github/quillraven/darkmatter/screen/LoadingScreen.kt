@@ -103,7 +103,7 @@ class LoadingScreen(
                     progressBar = image(SkinImage.LIFE_BAR.atlasKey).apply {
                         scaleX = 0f
                     }
-                    progressText = textButton(bundle["loading"], SkinTextButton.TRANSPARENT.name)
+                    progressText = textButton(bundle["loading"], SkinTextButton.LABEL_TRANSPARENT.name)
                     cell.padLeft(ELEMENT_PADDING).padRight(ELEMENT_PADDING).padBottom(ELEMENT_PADDING)
                 }
 

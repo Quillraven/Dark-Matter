@@ -36,17 +36,17 @@ class GameOverUI(private val bundle: I18NBundle) {
             }
             row()
 
-            lastScoreButton = textButton(bundle["score", 0], SkinLabel.DEFAULT.name) {
+            lastScoreButton = textButton(bundle["score", 0], SkinTextButton.LABEL.name) {
                 label.wrap = true
             }
             row()
 
-            highScoreButton = textButton(bundle["highscore", 0], SkinLabel.DEFAULT.name) {
+            highScoreButton = textButton(bundle["highscore", 0], SkinTextButton.LABEL.name) {
                 label.wrap = true
             }
             row()
 
-            backButton = textButton(bundle["backToMenu"], SkinLabel.DEFAULT.name) {
+            backButton = textButton(bundle["backToMenu"], SkinTextButton.DEFAULT.name) {
                 label.wrap = true
             }
             row()
