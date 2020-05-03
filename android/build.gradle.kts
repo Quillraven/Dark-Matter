@@ -17,7 +17,7 @@ android {
         applicationId = "com.github.quillraven.darkmatter"
         minSdkVersion(14)
         targetSdkVersion(29)
-        versionCode = 1
+        versionCode = 2
         versionName = "${project.version}"
     }
 
