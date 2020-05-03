@@ -1,4 +1,6 @@
 # Dark Matter
+![master](https://github.com/Quillraven/Dark-Matter/workflows/master/badge.svg?branch=master)
+
 [![Kotlin](https://img.shields.io/badge/kotlin-1.3.72-red.svg)](http://kotlinlang.org/)
 [![LibGDX](https://img.shields.io/badge/libgdx-1.9.11--SNAPSHOT-green.svg)](https://libgdx.badlogicgames.com/)
 [![LibKTX](https://img.shields.io/badge/libktx-1.9.10--SNAPSHOT-blue.svg)](https://libktx.github.io/)
