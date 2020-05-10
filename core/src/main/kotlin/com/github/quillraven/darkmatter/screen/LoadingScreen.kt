@@ -82,7 +82,7 @@ class LoadingScreen(
                 defaults().fillX().expandX()
 
                 label(bundle["gameTitle"], SkinLabel.LARGE.name) { cell ->
-                    wrap = true
+                    setWrap(true)
                     setAlignment(Align.center)
                     cell.apply {
                         padTop(OFFSET_TITLE_Y)
@@ -92,7 +92,7 @@ class LoadingScreen(
                 row()
 
                 touchToBegin = label(bundle["touchToBegin"], SkinLabel.LARGE.name) { cell ->
-                    wrap = true
+                    setWrap(true)
                     setAlignment(Align.center)
                     color.a = 0f
                     cell.padLeft(ELEMENT_PADDING).padRight(ELEMENT_PADDING).top().expandY()

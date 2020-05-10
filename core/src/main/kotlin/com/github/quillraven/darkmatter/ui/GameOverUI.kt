@@ -27,7 +27,7 @@ class GameOverUI(private val bundle: I18NBundle) {
             defaults().pad(MENU_DEFAULT_PADDING).expandX().fillX()
 
             label(bundle["gameTitle"], SkinLabel.LARGE.name) { cell ->
-                wrap = true
+                setWrap(true)
                 setAlignment(Align.center)
                 cell.apply {
                     padTop(OFFSET_TITLE_Y)
@@ -36,19 +36,13 @@ class GameOverUI(private val bundle: I18NBundle) {
             }
             row()
 
-            lastScoreButton = textButton(bundle["score", 0], SkinTextButton.LABEL.name) {
-                label.wrap = true
-            }
+            lastScoreButton = textButton(bundle["score", 0], SkinTextButton.LABEL.name)
             row()
 
-            highScoreButton = textButton(bundle["highscore", 0], SkinTextButton.LABEL.name) {
-                label.wrap = true
-            }
+            highScoreButton = textButton(bundle["highscore", 0], SkinTextButton.LABEL.name)
             row()
 
-            backButton = textButton(bundle["backToMenu"], SkinTextButton.DEFAULT.name) {
-                label.wrap = true
-            }
+            backButton = textButton(bundle["backToMenu"], SkinTextButton.DEFAULT.name)
             row()
 
             setFillParent(true)

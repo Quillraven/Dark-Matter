@@ -33,7 +33,7 @@ class MenuUI(private val bundle: I18NBundle) {
             defaults().pad(MENU_DEFAULT_PADDING).expandX().fillX().colspan(2)
 
             label(bundle["gameTitle"], SkinLabel.LARGE.name) { cell ->
-                wrap = true
+                setWrap(true)
                 setAlignment(Align.center)
                 cell.apply {
                     padTop(OFFSET_TITLE_Y)
@@ -42,31 +42,22 @@ class MenuUI(private val bundle: I18NBundle) {
             }
             row()
 
-            startGameButton = textButton(bundle["startGame"], SkinTextButton.DEFAULT.name) {
-                label.wrap = true
-            }
+            startGameButton = textButton(bundle["startGame"], SkinTextButton.DEFAULT.name)
             row()
 
             soundButton = imageButton(SkinImageButton.SOUND_ON_OFF.name).cell(colspan = 1, expandX = false)
             controlButton = textButton(bundle["control"], SkinTextButton.DEFAULT.name) { cell ->
-                label.wrap = true
                 cell.colspan(1)
             }
             row()
 
-            highScoreButton = textButton(bundle["highscore", 0], SkinTextButton.LABEL.name) {
-                label.wrap = true
-            }
+            highScoreButton = textButton(bundle["highscore", 0], SkinTextButton.LABEL.name)
             row()
 
-            creditsButton = textButton(bundle["credit"], SkinTextButton.DEFAULT.name) {
-                label.wrap = true
-            }
+            creditsButton = textButton(bundle["credit"], SkinTextButton.DEFAULT.name)
             row()
 
-            quitGameButton = textButton(bundle["quitGame"], SkinTextButton.DEFAULT.name) {
-                label.wrap = true
-            }
+            quitGameButton = textButton(bundle["quitGame"], SkinTextButton.DEFAULT.name)
 
             setFillParent(true)
             top()
