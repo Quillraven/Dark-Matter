@@ -11,7 +11,7 @@
 It was generated with [gdx-liftoff](https://github.com/tommyettinger/gdx-liftoff). It is written in [Kotlin](https://kotlinlang.org/) and uses
 the [LibKTX](https://github.com/libktx/ktx) extensions for libgdx.
 
-The code and the project will be explained in an upcoming video tutorial on my [youtube](https://www.youtube.com/Quillraven) channel: **LINK WILL FOLLOW**
+The code and the project is explained in a [video tutorial](https://www.youtube.com/watch?v=7aa6CY7_j9U&list=PLTKHCDn5RKK-8lZmjZoG4rFywN_SLbZR8) on my [youtube](https://www.youtube.com/Quillraven) channel.
 
 ### Gameplay
 ![image](https://user-images.githubusercontent.com/93260/80301293-8c362880-87a3-11ea-9e61-02afad9343ec.png)
