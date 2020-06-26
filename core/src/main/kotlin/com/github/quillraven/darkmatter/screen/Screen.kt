@@ -10,7 +10,6 @@ import com.github.quillraven.darkmatter.audio.AudioService
 import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventListener
 import com.github.quillraven.darkmatter.event.GameEventManager
-import com.github.quillraven.darkmatter.event.GameEventType
 import kotlinx.coroutines.launch
 import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
@@ -64,5 +63,5 @@ abstract class Screen(
         stage.viewport.update(width, height, true)
     }
 
-    override fun onEvent(type: GameEventType, data: GameEvent?) = Unit
+    override fun onEvent(event: GameEvent) = Unit
 }

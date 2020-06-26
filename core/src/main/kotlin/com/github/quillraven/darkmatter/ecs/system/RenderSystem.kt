@@ -19,8 +19,6 @@ import com.github.quillraven.darkmatter.ecs.component.TransformComponent
 import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventListener
 import com.github.quillraven.darkmatter.event.GameEventManager
-import com.github.quillraven.darkmatter.event.GameEventPowerUp
-import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.ashley.allOf
 import ktx.ashley.exclude
 import ktx.ashley.get
@@ -71,12 +69,12 @@ class RenderSystem(
 
     override fun addedToEngine(engine: Engine?) {
         super.addedToEngine(engine)
-        gameEventManager.addListener(GameEventType.POWER_UP, this)
+        gameEventManager.addListener(GameEvent.PowerUp::class, this)
     }
 
     override fun removedFromEngine(engine: Engine?) {
         super.removedFromEngine(engine)
-        gameEventManager.removeListener(GameEventType.POWER_UP, this)
+        gameEventManager.removeListener(GameEvent.PowerUp::class, this)
     }
 
     override fun update(deltaTime: Float) {
@@ -159,8 +157,8 @@ class RenderSystem(
         }
     }
 
-    override fun onEvent(type: GameEventType, data: GameEvent?) {
-        val eventPowerUp = data as GameEventPowerUp
+    override fun onEvent(event: GameEvent) {
+        val eventPowerUp = event as GameEvent.PowerUp
         if (eventPowerUp.type == PowerUpType.SPEED_1) {
             backgroundScrollSpeed.y -= BGD_SCROLL_SPEED_GAIN_BOOST_1
         } else if (eventPowerUp.type == PowerUpType.SPEED_2) {

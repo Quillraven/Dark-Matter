@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.Pool
 import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventListener
 import com.github.quillraven.darkmatter.event.GameEventManager
-import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.collections.GdxArray
 import ktx.math.vec3
 
@@ -78,12 +77,12 @@ class CameraShakeSystem(
 
     override fun addedToEngine(engine: Engine?) {
         super.addedToEngine(engine)
-        gameEventManager.addListener(GameEventType.PLAYER_HIT, this)
+        gameEventManager.addListener(GameEvent.PlayerHit::class, this)
     }
 
     override fun removedFromEngine(engine: Engine?) {
         super.removedFromEngine(engine)
-        gameEventManager.removeListener(GameEventType.PLAYER_HIT, this)
+        gameEventManager.removeListener(GameEvent.PlayerHit::class, this)
     }
 
     override fun update(deltaTime: Float) {
@@ -98,7 +97,7 @@ class CameraShakeSystem(
         }
     }
 
-    override fun onEvent(type: GameEventType, data: GameEvent?) {
+    override fun onEvent(event: GameEvent) {
         if (activeShakes.size < MAX_SHAKE_INSTANCES) {
             activeShakes.add(shakePool.obtain().apply {
                 duration = SHAKE_DURATION

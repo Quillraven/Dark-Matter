@@ -11,9 +11,8 @@ import com.github.quillraven.darkmatter.ecs.component.MoveComponent
 import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
 import com.github.quillraven.darkmatter.ecs.component.RemoveComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
+import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventManager
-import com.github.quillraven.darkmatter.event.GameEventPlayerMove
-import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.ashley.allOf
 import ktx.ashley.exclude
 import ktx.ashley.get
@@ -103,7 +102,7 @@ class MoveSystem(
         val oldY = transform.position.y
         moveEntity(transform, move, deltaTime)
         player.distance += abs(transform.position.y - oldY)
-        gameEventManager.dispatchEvent(GameEventType.PLAYER_MOVE, GameEventPlayerMove.apply {
+        gameEventManager.dispatchEvent(GameEvent.PlayerMove.apply {
             distance = player.distance
             speed = move.speed.y
         })

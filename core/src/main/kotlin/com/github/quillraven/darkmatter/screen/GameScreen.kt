@@ -20,13 +20,6 @@ import com.github.quillraven.darkmatter.ecs.system.PowerUpSystem
 import com.github.quillraven.darkmatter.ecs.system.RenderSystem
 import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventListener
-import com.github.quillraven.darkmatter.event.GameEventPlayerBlock
-import com.github.quillraven.darkmatter.event.GameEventPlayerDeath
-import com.github.quillraven.darkmatter.event.GameEventPlayerHit
-import com.github.quillraven.darkmatter.event.GameEventPlayerMove
-import com.github.quillraven.darkmatter.event.GameEventPowerUp
-import com.github.quillraven.darkmatter.event.GameEventType
-import com.github.quillraven.darkmatter.event.GameEventType.PLAYER_SPAWN
 import com.github.quillraven.darkmatter.ui.GameUI
 import ktx.actors.onChangeEvent
 import ktx.actors.onClick
@@ -62,12 +55,12 @@ class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener 
     override fun show() {
         super.show()
         gameEventManager.run {
-            addListener(PLAYER_SPAWN, this@GameScreen)
-            addListener(GameEventType.PLAYER_DEATH, this@GameScreen)
-            addListener(GameEventType.PLAYER_MOVE, this@GameScreen)
-            addListener(GameEventType.PLAYER_HIT, this@GameScreen)
-            addListener(GameEventType.POWER_UP, this@GameScreen)
-            addListener(GameEventType.PLAYER_BLOCK, this@GameScreen)
+            addListener(GameEvent.PlayerSpawn::class, this@GameScreen)
+            addListener(GameEvent.PlayerDeath::class, this@GameScreen)
+            addListener(GameEvent.PlayerMove::class, this@GameScreen)
+            addListener(GameEvent.PlayerHit::class, this@GameScreen)
+            addListener(GameEvent.PowerUp::class, this@GameScreen)
+            addListener(GameEvent.PlayerBlock::class, this@GameScreen)
         }
         engine.run {
             // remove any power ups and reset the spawn timer
@@ -79,7 +72,7 @@ class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener 
             getSystem<PlayerAnimationSystem>().setProcessing(true)
             createPlayer(assets)
             audioService.play(SPAWN)
-            gameEventManager.dispatchEvent(PLAYER_SPAWN)
+            gameEventManager.dispatchEvent(GameEvent.PlayerSpawn)
             createDarkMatter()
         }
         setupUI()
@@ -137,40 +130,39 @@ class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener 
         }
     }
 
-    override fun onEvent(type: GameEventType, data: GameEvent?) {
-        when (type) {
-            PLAYER_SPAWN -> {
+    override fun onEvent(event: GameEvent) {
+        when (event) {
+            is GameEvent.PlayerSpawn -> {
                 LOG.debug { "Spawn new player" }
                 ui.updateDistance(0f)
             }
-            GameEventType.PLAYER_DEATH -> {
-                onPlayerDeath(data)
+            is GameEvent.PlayerDeath -> {
+                onPlayerDeath(event)
             }
-            GameEventType.PLAYER_MOVE -> {
+            is GameEvent.PlayerMove -> {
                 ui.run {
-                    updateDistance((data as GameEventPlayerMove).distance)
-                    updateSpeed(data.speed)
+                    updateDistance(event.distance)
+                    updateSpeed(event.speed)
                 }
             }
-            GameEventType.PLAYER_HIT -> {
+            is GameEvent.PlayerHit -> {
                 ui.run {
-                    updateLife((data as GameEventPlayerHit).life, data.maxLife)
+                    updateLife(event.life, event.maxLife)
                     showWarning()
                 }
             }
-            GameEventType.POWER_UP -> {
-                onPlayerPowerUp(data)
+            is GameEvent.PowerUp -> {
+                onPlayerPowerUp(event)
             }
-            GameEventType.PLAYER_BLOCK -> {
-                ui.updateShield((data as GameEventPlayerBlock).shield, data.maxShield)
+            is GameEvent.PlayerBlock -> {
+                ui.updateShield(event.shield, event.maxShield)
             }
         }
     }
 
-    private fun onPlayerPowerUp(data: GameEvent?) {
-        val eventData = data as GameEventPowerUp
-        data.player[PlayerComponent.mapper]?.let { player ->
-            when (eventData.type) {
+    private fun onPlayerPowerUp(event: GameEvent.PowerUp) {
+        event.player[PlayerComponent.mapper]?.let { player ->
+            when (event.type) {
                 PowerUpType.LIFE -> ui.updateLife(player.life, player.maxLife)
                 PowerUpType.SHIELD -> ui.updateShield(player.shield, player.maxShield)
                 else -> {
@@ -180,8 +172,8 @@ class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener 
         }
     }
 
-    private fun onPlayerDeath(data: GameEvent?) {
-        val distance = (data as GameEventPlayerDeath).distance.roundToInt()
+    private fun onPlayerDeath(event: GameEvent.PlayerDeath) {
+        val distance = event.distance.roundToInt()
         LOG.debug { "Player died with a distance of $distance" }
         if (distance > preferences[PREFERENCE_HIGHSCORE_KEY, 0]) {
             preferences.flush {

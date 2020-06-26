@@ -11,9 +11,6 @@ import com.github.quillraven.darkmatter.ecs.component.RemoveComponent
 import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventListener
 import com.github.quillraven.darkmatter.event.GameEventManager
-import com.github.quillraven.darkmatter.event.GameEventPlayerHit
-import com.github.quillraven.darkmatter.event.GameEventPowerUp
-import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.ashley.allOf
 import ktx.ashley.exclude
 import ktx.ashley.get
@@ -31,8 +28,8 @@ class PlayerColorSystem(
 
     override fun addedToEngine(engine: Engine?) {
         super.addedToEngine(engine)
-        gameEventManager.addListener(GameEventType.PLAYER_HIT, this)
-        gameEventManager.addListener(GameEventType.POWER_UP, this)
+        gameEventManager.addListener(GameEvent.PlayerHit::class, this)
+        gameEventManager.addListener(GameEvent.PowerUp::class, this)
     }
 
     override fun removedFromEngine(engine: Engine?) {
@@ -72,13 +69,16 @@ class PlayerColorSystem(
         }
     }
 
-    override fun onEvent(type: GameEventType, data: GameEvent?) {
-        if (type == GameEventType.PLAYER_HIT) {
-            // player gets damaged -> change to new color
-            setNewTargetColor((data as GameEventPlayerHit).player)
-        } else if (type == GameEventType.POWER_UP && (data as GameEventPowerUp).type == PowerUpType.LIFE) {
-            // player gets healed -> change to new color
-            setNewTargetColor(data.player)
+    override fun onEvent(event: GameEvent) {
+        when {
+            event is GameEvent.PlayerHit -> {
+                // player gets damaged -> change to new color
+                setNewTargetColor(event.player)
+            }
+            event is GameEvent.PowerUp && event.type == PowerUpType.LIFE -> {
+                // player gets healed -> change to new color
+                setNewTargetColor(event.player)
+            }
         }
     }
 }

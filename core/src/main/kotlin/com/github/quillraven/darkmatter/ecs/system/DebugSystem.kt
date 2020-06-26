@@ -10,11 +10,8 @@ import com.github.quillraven.darkmatter.audio.AudioService
 import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
 import com.github.quillraven.darkmatter.ecs.component.PowerUpType
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
+import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventManager
-import com.github.quillraven.darkmatter.event.GameEventPlayerBlock
-import com.github.quillraven.darkmatter.event.GameEventPlayerHit
-import com.github.quillraven.darkmatter.event.GameEventPowerUp
-import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.ashley.allOf
 import ktx.ashley.get
 import ktx.ashley.getSystem
@@ -47,7 +44,7 @@ class DebugSystem(
                     Gdx.input.isKeyPressed(Input.Keys.NUM_2) -> {
                         // add shield
                         player.shield = min(player.maxShield, player.shield + SHIELD_GAIN)
-                        gameEventManager.dispatchEvent(GameEventType.POWER_UP, GameEventPowerUp.apply {
+                        gameEventManager.dispatchEvent(GameEvent.PowerUp.apply {
                             type = PowerUpType.SHIELD
                             this.player = entity
                         })
@@ -55,7 +52,7 @@ class DebugSystem(
                     Gdx.input.isKeyPressed(Input.Keys.NUM_3) -> {
                         // remove shield
                         player.shield = max(0f, player.shield - SHIELD_GAIN)
-                        gameEventManager.dispatchEvent(GameEventType.PLAYER_BLOCK, GameEventPlayerBlock.apply {
+                        gameEventManager.dispatchEvent(GameEvent.PlayerBlock.apply {
                             shield = player.shield
                             maxShield = player.maxShield
                         })
@@ -71,7 +68,7 @@ class DebugSystem(
                     Gdx.input.isKeyPressed(Input.Keys.NUM_6) -> {
                         // trigger player damage event
                         player.life = max(1f, player.life - PLAYER_DAMAGE)
-                        gameEventManager.dispatchEvent(GameEventType.PLAYER_HIT, GameEventPlayerHit.apply {
+                        gameEventManager.dispatchEvent(GameEvent.PlayerHit.apply {
                             this.player = entity
                             life = player.life
                             maxLife = player.maxLife

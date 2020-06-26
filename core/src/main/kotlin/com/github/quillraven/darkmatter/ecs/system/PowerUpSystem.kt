@@ -15,9 +15,8 @@ import com.github.quillraven.darkmatter.ecs.component.PowerUpComponent
 import com.github.quillraven.darkmatter.ecs.component.PowerUpType
 import com.github.quillraven.darkmatter.ecs.component.RemoveComponent
 import com.github.quillraven.darkmatter.ecs.component.TransformComponent
+import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventManager
-import com.github.quillraven.darkmatter.event.GameEventPowerUp
-import com.github.quillraven.darkmatter.event.GameEventType
 import ktx.ashley.addComponent
 import ktx.ashley.allOf
 import ktx.ashley.entity
@@ -171,7 +170,7 @@ class PowerUpSystem(
             }
             powerUp.addComponent<RemoveComponent>(engine)
 
-            gameEventManager.dispatchEvent(GameEventType.POWER_UP, GameEventPowerUp.apply {
+            gameEventManager.dispatchEvent(GameEvent.PowerUp.apply {
                 this.player = player
                 type = powerUpCmp.type
             })
