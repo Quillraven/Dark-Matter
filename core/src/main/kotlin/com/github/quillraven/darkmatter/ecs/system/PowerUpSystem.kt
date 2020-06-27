@@ -5,7 +5,6 @@ import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.github.quillraven.darkmatter.V_WIDTH
-import com.github.quillraven.darkmatter.asset.SoundAsset
 import com.github.quillraven.darkmatter.audio.AudioService
 import com.github.quillraven.darkmatter.ecs.component.AnimationComponent
 import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
@@ -26,7 +25,6 @@ import ktx.ashley.with
 import ktx.collections.GdxArray
 import ktx.collections.gdxArrayOf
 import ktx.log.debug
-import ktx.log.error
 import ktx.log.logger
 import kotlin.math.min
 
@@ -34,10 +32,6 @@ private val LOG = logger<PowerUpSystem>()
 private const val MAX_SPAWN_INTERVAL = 1.5f
 private const val MIN_SPAWN_INTERVAL = 0.9f
 private const val POWER_UP_SPEED = -8.75f
-private const val BOOST_1_SPEED_GAIN = 3f
-private const val BOOST_2_SPEED_GAIN = 3.75f
-private const val LIFE_GAIN = 25f
-private const val SHIELD_GAIN = 25f
 
 private class SpawnPattern(
     type1: PowerUpType = PowerUpType.NONE,
@@ -147,33 +141,26 @@ class PowerUpSystem(
 
     private fun collectPowerUp(player: Entity, powerUp: Entity) {
         powerUp[PowerUpComponent.mapper]?.let { powerUpCmp ->
-            LOG.debug { "Picking up power of type ${powerUpCmp.type}" }
+            powerUpCmp.type.also { powerUpType ->
+                LOG.debug { "Picking up power of powerUpType $powerUpType" }
 
-            when (powerUpCmp.type) {
-                PowerUpType.SPEED_1 -> {
-                    player[MoveComponent.mapper]?.let { it.speed.y += BOOST_1_SPEED_GAIN }
-                    audioService.play(SoundAsset.BOOST_1)
+                // add bonus
+                player[MoveComponent.mapper]?.let { it.speed.y += powerUpType.speedGain }
+                player[PlayerComponent.mapper]?.let {
+                    it.life = min(it.maxLife, it.life + powerUpType.lifeGain)
+                    it.shield = min(it.maxShield, it.shield + powerUpType.shieldGain)
                 }
-                PowerUpType.SPEED_2 -> {
-                    player[MoveComponent.mapper]?.let { it.speed.y += BOOST_2_SPEED_GAIN }
-                    audioService.play(SoundAsset.BOOST_2)
-                }
-                PowerUpType.LIFE -> player[PlayerComponent.mapper]?.let {
-                    it.life = min(it.maxLife, it.life + LIFE_GAIN)
-                    audioService.play(SoundAsset.LIFE)
-                }
-                PowerUpType.SHIELD -> player[PlayerComponent.mapper]?.let {
-                    it.shield = min(it.maxShield, it.shield + SHIELD_GAIN)
-                    audioService.play(SoundAsset.SHIELD)
-                }
-                else -> LOG.error { "Unsupported power of type ${powerUpCmp.type}" }
+
+                // play collect sound
+                audioService.play(powerUpType.collectSound)
+
+                // dispatch event and remove power up
+                gameEventManager.dispatchEvent(GameEvent.PowerUp.apply {
+                    this.player = player
+                    type = powerUpType
+                })
+                powerUp.addComponent<RemoveComponent>(engine)
             }
-            powerUp.addComponent<RemoveComponent>(engine)
-
-            gameEventManager.dispatchEvent(GameEvent.PowerUp.apply {
-                this.player = player
-                type = powerUpCmp.type
-            })
         }
     }
 
