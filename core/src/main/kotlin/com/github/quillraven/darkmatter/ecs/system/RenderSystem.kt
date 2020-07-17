@@ -112,12 +112,7 @@ class RenderSystem(
             outlineShader.setUniformf(outlineColorLoc, outlineColor)
             entity[GraphicComponent.mapper]?.let { graphic ->
                 graphic.sprite.run {
-                    outlineShader.setUniformf(
-                        textureSizeLoc, vec2(
-                            texture.width.toFloat(),
-                            texture.height.toFloat()
-                        )
-                    )
+                    outlineShader.setUniformf(textureSizeLoc, texture.width.toFloat(), texture.height.toFloat())
                     draw(it)
                 }
             }
