@@ -27,8 +27,8 @@ class MenuScreen(game: Game) : Screen(game, MusicAsset.MENU) {
     private val preferences = game.preferences
     private val ui = MenuUI(bundle).apply {
         startGameButton.onClick { game.setScreen<GameScreen>() }
-        soundButton.onChangeEvent { _, actor ->
-            audioService.enabled = !actor.isChecked
+        soundButton.onChangeEvent {
+            audioService.enabled = !this.isChecked
             preferences.flush {
                 this[PREFERENCE_MUSIC_ENABLED_KEY] = audioService.enabled
             }

@@ -42,8 +42,8 @@ class GameScreen(game: Game) : Screen(game, MusicAsset.GAME), GameEventListener 
         quitImageButton.onClick {
             game.setScreen<MenuScreen>()
         }
-        pauseResumeButton.onChangeEvent { _, actor ->
-            when (actor.isChecked) {
+        pauseResumeButton.onChangeEvent {
+            when (this.isChecked) {
                 true -> audioService.pause()
                 else -> audioService.resume()
             }
