@@ -16,7 +16,7 @@ java {
 }
 
 application {
-    mainClassName = "com.github.quillraven.darkmatter.desktop.LauncherKt"
+    mainClass.set("com.github.quillraven.darkmatter.desktop.LauncherKt")
 }
 
 val assetsDir = rootProject.files("assets")
@@ -30,10 +30,11 @@ tasks {
     named<Jar>("jar") {
         from(files(sourceSets.main.get().output.classesDirs))
         from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-        from(assetsDir)
+
+        archiveBaseName.set("Dark Matter")
 
         manifest {
-            attributes["Main-Class"] = application.mainClassName
+            attributes["Main-Class"] = application.mainClass.get()
         }
     }
 }

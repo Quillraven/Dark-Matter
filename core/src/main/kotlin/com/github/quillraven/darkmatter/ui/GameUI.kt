@@ -55,7 +55,7 @@ class GameUI(bundle: I18NBundle) : Group() {
     }
     val touchToBeginLabel = scene2d.label(bundle["touchToBegin"], SkinLabel.LARGE.name) {
         y = V_HEIGHT_PIXELS - TOUCH_TO_BEGIN_LABEL_OFFSET_Y
-        setWrap(true)
+        wrap = true
         width = V_WIDTH_PIXELS.toFloat()
         setAlignment(Align.center)
         color.a = 0f

@@ -25,7 +25,7 @@ class ConfirmDialog(bundle: I18NBundle) : Dialog("", Scene2DSkin.defaultSkin, Sk
     init {
         contentTable.defaults().fillX().expandX().pad(ELEMENT_PADDING)
         text(scene2d.label(bundle["areYouSure"], SkinLabel.DEFAULT.name).apply {
-            setWrap(true)
+            wrap = true
             setAlignment(Align.center)
         })
         contentTable.pack()

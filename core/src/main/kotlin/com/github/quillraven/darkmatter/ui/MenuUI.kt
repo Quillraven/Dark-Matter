@@ -33,7 +33,7 @@ class MenuUI(private val bundle: I18NBundle) {
             defaults().pad(MENU_DEFAULT_PADDING).expandX().fillX().colspan(2)
 
             label(bundle["gameTitle"], SkinLabel.LARGE.name) { cell ->
-                setWrap(true)
+                wrap = true
                 setAlignment(Align.center)
                 cell.apply {
                     padTop(OFFSET_TITLE_Y)

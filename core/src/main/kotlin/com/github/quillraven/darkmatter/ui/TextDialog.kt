@@ -36,7 +36,7 @@ class TextDialog(
             variableSizeKnobs = false
 
             label(bundle[txtBundleKey], SkinLabel.DEFAULT.name) {
-                setWrap(true)
+                wrap = true
                 setAlignment(Align.topLeft)
             }
         }).padRight(SCROLL_PANE_PAD_RIGHT)
