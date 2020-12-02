@@ -3,7 +3,7 @@
 
 [![Kotlin](https://img.shields.io/badge/kotlin-1.4.10-red.svg)](http://kotlinlang.org/)
 [![LibGDX](https://img.shields.io/badge/libgdx-1.9.12-green.svg)](https://libgdx.badlogicgames.com/)
-[![LibKTX](https://img.shields.io/badge/libktx-1.9.12--SNAPSHOT-blue.svg)](https://libktx.github.io/)
+[![LibKTX](https://img.shields.io/badge/libktx-1.9.12--b1-blue.svg)](https://libktx.github.io/)
 
 ![image](https://user-images.githubusercontent.com/93260/80301272-77f22b80-87a3-11ea-8df8-df9785eea603.png)
 
