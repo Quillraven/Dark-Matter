@@ -1,0 +1,37 @@
+name: master
+
+on:
+  push:
+    paths:
+      - 'core/**'
+    branches:
+      - master
+  pull_request:
+    paths:
+      - 'core/**'
+    branches:
+      - master
+
+jobs:
+  gradle:
+    runs-on: windows-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+    
+      - name: setup JDK8 version
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+
+      - name: Make gradlew executable
+          run: chmod +x ./gradlew
+
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+
+      - name: build
+        run: ./gradlew clean build
+
+      - name: detekt
+        run: ./gradlew detekt
