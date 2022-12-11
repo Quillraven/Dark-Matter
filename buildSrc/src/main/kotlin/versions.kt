@@ -9,6 +9,7 @@ object Versions {
     const val detekt = "1.22.0"
     const val gretty = "3.1.0"
     const val gdxWebToolsVersion = "1.0.0-SNAPSHOT"
+    const val teamvmCli = "0.7.0"
     val java = JavaVersion.VERSION_1_8
     const val jvm = "1.8"
 }

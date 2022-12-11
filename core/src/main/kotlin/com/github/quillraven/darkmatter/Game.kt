@@ -5,6 +5,7 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.assets.loaders.FileHandleResolver
 import com.badlogic.gdx.graphics.profiling.GLProfiler
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
@@ -34,7 +35,7 @@ class Game : KtxGame<KtxScreen>() {
         Gdx.input.inputProcessor = result
         result
     }
-    val assets: AssetManager = AssetManager()
+    val assets: AssetManager by lazy { AssetManager() }
     val gameEventManager by lazy { GameEventManager() }
     val audioService by lazy { DefaultAudioService(assets) }
     val engine by lazy {

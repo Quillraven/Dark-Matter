@@ -48,8 +48,13 @@ enum class SkinImage(val atlasKey: String) {
 
 fun createSkin(assets: AssetManager) {
     val atlas = assets[TextureAtlasAsset.UI.descriptor]
-    val bigFont = assets[BitmapFontAsset.FONT_LARGE_GRADIENT.descriptor]
-    val defaultFont = assets[BitmapFontAsset.FONT_DEFAULT.descriptor]
+    val bigFont = assets[BitmapFontAsset.FONT_LARGE_GRADIENT.descriptor].apply {
+        setUseIntegerPositions(false)
+    }
+    val defaultFont = assets[BitmapFontAsset.FONT_DEFAULT.descriptor].apply {
+        setUseIntegerPositions(false)
+    }
+
     Scene2DSkin.defaultSkin = skin(atlas) { skin ->
         createLabelStyles(bigFont, defaultFont)
         createImageButtonStyles(skin)

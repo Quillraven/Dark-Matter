@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdkVersion = "android-31"
     sourceSets {
         named("main") {
             java.srcDirs("src/main/kotlin")
@@ -15,10 +15,11 @@ android {
 
     defaultConfig {
         applicationId = "com.github.quillraven.darkmatter"
-        minSdkVersion(19)
-        targetSdkVersion(30)
+        minSdk = 19
+        targetSdk = 31
         versionCode = 3
         versionName = "${project.version}"
+        multiDexEnabled = true
     }
 
     buildTypes {
@@ -31,17 +32,18 @@ android {
     compileOptions {
         sourceCompatibility = Versions.java
         targetCompatibility = Versions.java
+        isCoreLibraryDesugaringEnabled = true
     }
 }
 
 val natives: Configuration by configurations.creating
 
 dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
     implementation(project(":core"))
     implementation(kotlin("stdlib"))
     implementation("com.badlogicgames.gdx:gdx-backend-android:${Versions.gdx}")
 
-    natives("com.badlogicgames.gdx:gdx-platform:${Versions.gdx}:natives-armeabi")
     natives("com.badlogicgames.gdx:gdx-platform:${Versions.gdx}:natives-armeabi-v7a")
     natives("com.badlogicgames.gdx:gdx-platform:${Versions.gdx}:natives-arm64-v8a")
     natives("com.badlogicgames.gdx:gdx-platform:${Versions.gdx}:natives-x86")

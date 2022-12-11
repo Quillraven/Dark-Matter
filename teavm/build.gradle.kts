@@ -9,7 +9,7 @@ plugins {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(project(":core"))
-    implementation("org.teavm:teavm-cli:0.7.0")
+    implementation("org.teavm:teavm-cli:${Versions.teamvmCli}")
     implementation("com.github.xpenatan.gdx-teavm:backend-web:${Versions.gdxWebToolsVersion}")
     implementation("com.github.xpenatan.gdx-teavm:backend-teavm:${Versions.gdxWebToolsVersion}")
 }

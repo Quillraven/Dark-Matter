@@ -105,15 +105,14 @@ class LoadingScreen(
     }
 
     override fun render(delta: Float) {
-        if (assets.progress >= 1f && Gdx.input.justTouched() && game.containsScreen<MenuScreen>()) {
+        if (assetsFinished && Gdx.input.justTouched() && game.containsScreen<MenuScreen>()) {
             game.removeScreen(LoadingScreen::class.java)
             dispose()
             game.setScreen<MenuScreen>()
         }
 
         progressBar.scaleX = assets.progress
-        assets.update()
-        if (!assetsFinished && assets.progress >= 1f) {
+        if (assets.update() && !assetsFinished) {
             assetsFinished = true
             assetsLoaded()
         }
