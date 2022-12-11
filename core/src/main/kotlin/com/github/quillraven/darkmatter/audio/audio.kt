@@ -1,13 +1,11 @@
 package com.github.quillraven.darkmatter.audio
 
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.utils.Pool
 import com.github.quillraven.darkmatter.asset.MusicAsset
 import com.github.quillraven.darkmatter.asset.SoundAsset
-import ktx.assets.async.AssetStorage
-import ktx.log.debug
-import ktx.log.error
 import ktx.log.logger
 import java.util.*
 import kotlin.math.max
@@ -38,7 +36,7 @@ private class SoundRequestPool : Pool<SoundRequest>() {
     override fun newObject() = SoundRequest()
 }
 
-class DefaultAudioService(private val assets: AssetStorage) : AudioService {
+class DefaultAudioService(private val assets: AssetManager) : AudioService {
     override var enabled = true
         set(value) {
             when (value) {
@@ -63,13 +61,15 @@ class DefaultAudioService(private val assets: AssetStorage) : AudioService {
                     request.volume = max(request.volume, volume)
                 }
             }
+
             soundRequests.size >= MAX_SOUND_INSTANCES -> {
                 // maximum simultaneous sound instances reached -> do nothing
                 LOG.debug { "Maximum sound instances reached" }
             }
+
             else -> {
                 // new request
-                if (soundAsset.descriptor !in assets) {
+                if (soundAsset.descriptor.fileName !in assets) {
                     // sound not loaded -> error
                     LOG.error { "Sound $soundAsset is not loaded" }
                     return
@@ -94,7 +94,7 @@ class DefaultAudioService(private val assets: AssetStorage) : AudioService {
             currentMusic?.stop()
         }
 
-        if (musicAsset.descriptor !in assets) {
+        if (musicAsset.descriptor.fileName !in assets) {
             LOG.error { "Music $musicAsset is not loaded" }
             return
         }

@@ -1,40 +1,23 @@
 package com.github.quillraven.darkmatter.screen
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn
-import com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut
-import com.badlogic.gdx.scenes.scene2d.actions.Actions.forever
-import com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
 import com.github.quillraven.darkmatter.Game
-import com.github.quillraven.darkmatter.asset.I18NBundleAsset
-import com.github.quillraven.darkmatter.asset.ShaderProgramAsset
-import com.github.quillraven.darkmatter.asset.SoundAsset
-import com.github.quillraven.darkmatter.asset.TextureAsset
-import com.github.quillraven.darkmatter.asset.TextureAtlasAsset
+import com.github.quillraven.darkmatter.asset.*
 import com.github.quillraven.darkmatter.ui.SkinImage
 import com.github.quillraven.darkmatter.ui.SkinLabel
 import com.github.quillraven.darkmatter.ui.SkinTextButton
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
 import ktx.actors.plus
 import ktx.actors.plusAssign
 import ktx.app.KtxScreen
-import ktx.assets.async.AssetStorage
-import ktx.async.KtxAsync
-import ktx.collections.gdxArrayOf
-import ktx.log.debug
 import ktx.log.logger
-import ktx.scene2d.actors
-import ktx.scene2d.image
-import ktx.scene2d.label
-import ktx.scene2d.stack
-import ktx.scene2d.table
-import ktx.scene2d.textButton
+import ktx.scene2d.*
 
 private val LOG = logger<LoadingScreen>()
 private const val ACTOR_FADE_IN_TIME = 0.5f
@@ -46,28 +29,23 @@ private const val MENU_ELEMENT_OFFSET_TITLE_Y = 20f
 class LoadingScreen(
     private val game: Game,
     private val stage: Stage = game.stage,
-    private val assets: AssetStorage = game.assets
+    private val assets: AssetManager = game.assets
 ) : KtxScreen {
     private val bundle = assets[I18NBundleAsset.DEFAULT.descriptor]
     private lateinit var progressBar: Image
     private lateinit var progressText: TextButton
     private lateinit var touchToBegin: Label
+    private var assetsFinished = false
 
     override fun show() {
         LOG.debug { "Show" }
 
         val old = System.currentTimeMillis()
-        val assetRefs = gdxArrayOf(
-            TextureAtlasAsset.values().filter { !it.isSkinAtlas }.map { assets.loadAsync(it.descriptor) },
-            TextureAsset.values().map { assets.loadAsync(it.descriptor) },
-            SoundAsset.values().map { assets.loadAsync(it.descriptor) },
-            ShaderProgramAsset.values().map { assets.loadAsync(it.descriptor) }
-        ).flatten()
-        KtxAsync.launch {
-            assetRefs.joinAll()
-            LOG.debug { "It took ${(System.currentTimeMillis() - old) * 0.001f} seconds to load assets and initialize" }
-            assetsLoaded()
-        }
+        TextureAtlasAsset.values().filter { !it.isSkinAtlas }.forEach { assets.load(it.descriptor) }
+        TextureAsset.values().forEach { assets.load(it.descriptor) }
+        SoundAsset.values().forEach { assets.load(it.descriptor) }
+        ShaderProgramAsset.values().forEach { assets.load(it.descriptor) }
+        LOG.debug { "It took ${(System.currentTimeMillis() - old) * 0.001f} seconds to load assets and initialize" }
 
         setupUI()
     }
@@ -127,13 +105,19 @@ class LoadingScreen(
     }
 
     override fun render(delta: Float) {
-        if (assets.progress.isFinished && Gdx.input.justTouched() && game.containsScreen<MenuScreen>()) {
+        if (assets.progress >= 1f && Gdx.input.justTouched() && game.containsScreen<MenuScreen>()) {
             game.removeScreen(LoadingScreen::class.java)
             dispose()
             game.setScreen<MenuScreen>()
         }
 
-        progressBar.scaleX = assets.progress.percent
+        progressBar.scaleX = assets.progress
+        assets.update()
+        if (!assetsFinished && assets.progress >= 1f) {
+            assetsFinished = true
+            assetsLoaded()
+        }
+
         stage.run {
             viewport.apply()
             act()

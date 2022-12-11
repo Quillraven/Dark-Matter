@@ -1,17 +1,12 @@
 package com.github.quillraven.darkmatter.ui
 
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.github.quillraven.darkmatter.asset.BitmapFontAsset
 import com.github.quillraven.darkmatter.asset.TextureAtlasAsset
-import ktx.assets.async.AssetStorage
 import ktx.scene2d.Scene2DSkin
-import ktx.style.imageButton
-import ktx.style.label
-import ktx.style.scrollPane
-import ktx.style.skin
-import ktx.style.textButton
-import ktx.style.window
+import ktx.style.*
 
 enum class SkinLabel {
     LARGE, DEFAULT
@@ -51,7 +46,7 @@ enum class SkinImage(val atlasKey: String) {
     FRAME_LABEL_TRANSPARENT("label_frame_transparent")
 }
 
-fun createSkin(assets: AssetStorage) {
+fun createSkin(assets: AssetManager) {
     val atlas = assets[TextureAtlasAsset.UI.descriptor]
     val bigFont = assets[BitmapFontAsset.FONT_LARGE_GRADIENT.descriptor]
     val defaultFont = assets[BitmapFontAsset.FONT_DEFAULT.descriptor]

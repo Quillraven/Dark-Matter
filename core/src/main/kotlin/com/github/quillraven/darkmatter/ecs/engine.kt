@@ -2,30 +2,24 @@ package com.github.quillraven.darkmatter.ecs
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
+import com.badlogic.gdx.assets.AssetManager
 import com.github.quillraven.darkmatter.UNIT_SCALE
 import com.github.quillraven.darkmatter.V_HEIGHT
 import com.github.quillraven.darkmatter.V_WIDTH
 import com.github.quillraven.darkmatter.asset.TextureAtlasAsset
-import com.github.quillraven.darkmatter.ecs.component.AnimationComponent
+import com.github.quillraven.darkmatter.ecs.component.*
 import com.github.quillraven.darkmatter.ecs.component.AnimationType.DARK_MATTER
 import com.github.quillraven.darkmatter.ecs.component.AnimationType.FIRE
-import com.github.quillraven.darkmatter.ecs.component.AttachComponent
-import com.github.quillraven.darkmatter.ecs.component.FacingComponent
-import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
-import com.github.quillraven.darkmatter.ecs.component.MoveComponent
-import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
-import com.github.quillraven.darkmatter.ecs.component.TransformComponent
 import com.github.quillraven.darkmatter.ecs.system.DAMAGE_AREA_HEIGHT
 import ktx.ashley.entity
 import ktx.ashley.with
-import ktx.assets.async.AssetStorage
 
 private const val SHIP_FIRE_OFFSET_X = 1f // in pixels
 private const val SHIP_FIRE_OFFSET_Y = -6f // in pixels
 const val PLAYER_START_SPEED = 3f
 
 fun Engine.createPlayer(
-    assets: AssetStorage,
+    assets: AssetManager,
     spawnX: Float = V_WIDTH * 0.5f,
     spawnY: Float = V_HEIGHT * 0.5f
 ): Entity {

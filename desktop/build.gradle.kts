@@ -28,6 +28,8 @@ sourceSets {
 
 tasks {
     named<Jar>("jar") {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
         from(files(sourceSets.main.get().output.classesDirs))
         from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
 

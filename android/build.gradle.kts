@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(30)
     sourceSets {
         named("main") {
             java.srcDirs("src/main/kotlin")
@@ -15,8 +15,8 @@ android {
 
     defaultConfig {
         applicationId = "com.github.quillraven.darkmatter"
-        minSdkVersion(14)
-        targetSdkVersion(29)
+        minSdkVersion(19)
+        targetSdkVersion(30)
         versionCode = 3
         versionName = "${project.version}"
     }
