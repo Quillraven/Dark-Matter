@@ -3,6 +3,7 @@ package com.github.quillraven.darkmatter.asset
 import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.loaders.BitmapFontLoader
 import com.badlogic.gdx.assets.loaders.ShaderProgramLoader
+import com.badlogic.gdx.assets.loaders.TextureLoader
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Texture
@@ -49,7 +50,14 @@ enum class TextureAtlasAsset(
 enum class TextureAsset(
     fileName: String,
     directory: String = "graphics",
-    val descriptor: AssetDescriptor<Texture> = AssetDescriptor("$directory/$fileName", Texture::class.java)
+    val descriptor: AssetDescriptor<Texture> = AssetDescriptor(
+        "$directory/$fileName",
+        Texture::class.java,
+        TextureLoader.TextureParameter().apply {
+            wrapU = Texture.TextureWrap.Repeat
+            wrapV = Texture.TextureWrap.Repeat
+        }
+    )
 ) {
     BACKGROUND("background.png")
 }

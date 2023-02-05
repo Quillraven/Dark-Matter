@@ -11,11 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.github.quillraven.darkmatter.ecs.component.GraphicComponent
-import com.github.quillraven.darkmatter.ecs.component.PlayerComponent
-import com.github.quillraven.darkmatter.ecs.component.PowerUpType
-import com.github.quillraven.darkmatter.ecs.component.RemoveComponent
-import com.github.quillraven.darkmatter.ecs.component.TransformComponent
+import com.github.quillraven.darkmatter.ecs.component.*
 import com.github.quillraven.darkmatter.event.GameEvent
 import com.github.quillraven.darkmatter.event.GameEventListener
 import com.github.quillraven.darkmatter.event.GameEventManager
@@ -23,7 +19,6 @@ import ktx.ashley.allOf
 import ktx.ashley.exclude
 import ktx.ashley.get
 import ktx.graphics.use
-import ktx.log.error
 import ktx.log.logger
 import ktx.math.component1
 import ktx.math.component2
@@ -54,9 +49,7 @@ class RenderSystem(
 ), GameEventListener {
     private val batch: Batch = stage.batch
     private val camera: Camera = gameViewport.camera
-    private val background = Sprite(backgroundTexture.apply {
-        setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat)
-    })
+    private val background = Sprite(backgroundTexture)
     private val backgroundScrollSpeed = vec2(BGD_SCROLL_SPEED_X, MIN_BGD_SCROLL_SPEED_Y)
     private val textureSizeLoc = outlineShader.getUniformLocation("u_textureSize")
     private val outlineColorLoc = outlineShader.getUniformLocation("u_outlineColor")
